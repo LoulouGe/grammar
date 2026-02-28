@@ -14,8 +14,100 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
-    <!-- Three.js canvas -->
+    <!-- Background image -->
+    <div id="scene-background"></div>
+
+    <!-- 2D Cauldron image -->
+    <img id="cauldron-2d" src="assets/cauldron.png" alt="Chaudron" />
+
+    <!-- Three.js canvas (transparent — only effects + pouring animation) -->
     <canvas id="scene"></canvas>
+
+    <!-- 2D Wizard -->
+    <div id="wizard-2d">
+      <div class="wiz-hat">
+        <div class="wiz-hat-cone"></div>
+        <div class="wiz-hat-brim"></div>
+        <div class="wiz-hat-band"></div>
+        <div class="wiz-hat-star star1">&#10022;</div>
+        <div class="wiz-hat-star star2">&#10022;</div>
+      </div>
+      <div class="wiz-head">
+        <div class="wiz-eye wiz-eye-l">
+          <div class="wiz-iris"><div class="wiz-pupil"></div></div>
+          <div class="wiz-eye-shine"></div>
+        </div>
+        <div class="wiz-eye wiz-eye-r">
+          <div class="wiz-iris"><div class="wiz-pupil"></div></div>
+          <div class="wiz-eye-shine"></div>
+        </div>
+        <div class="wiz-brow wiz-brow-l"></div>
+        <div class="wiz-brow wiz-brow-r"></div>
+        <div class="wiz-cheek wiz-cheek-l"></div>
+        <div class="wiz-cheek wiz-cheek-r"></div>
+        <div class="wiz-nose"></div>
+        <div class="wiz-mouth"></div>
+      </div>
+      <div class="wiz-beard">
+        <div class="wiz-beard-main"></div>
+        <div class="wiz-beard-tip"></div>
+        <div class="wiz-mustache-l"></div>
+        <div class="wiz-mustache-r"></div>
+      </div>
+      <div class="wiz-body">
+        <div class="wiz-robe"></div>
+        <div class="wiz-belt"><div class="wiz-buckle"></div></div>
+        <div class="wiz-arm wiz-arm-l">
+          <div class="wiz-hand"></div>
+        </div>
+        <div class="wiz-arm wiz-arm-r">
+          <div class="wiz-hand"></div>
+        </div>
+      </div>
+      <div class="wiz-boots">
+        <div class="wiz-boot-l"></div>
+        <div class="wiz-boot-r"></div>
+      </div>
+    </div>
+
+    <!-- 2D Cat -->
+    <div id="cat-2d">
+      <div class="cat-tail">
+        <div class="cat-tail-seg seg1"></div>
+        <div class="cat-tail-seg seg2"></div>
+        <div class="cat-tail-seg seg3"></div>
+        <div class="cat-tail-tip"></div>
+      </div>
+      <div class="cat-body">
+        <div class="cat-belly"></div>
+      </div>
+      <div class="cat-head">
+        <div class="cat-ear cat-ear-l"><div class="cat-ear-inner"></div></div>
+        <div class="cat-ear cat-ear-r"><div class="cat-ear-inner"></div></div>
+        <div class="cat-eye cat-eye-l">
+          <div class="cat-iris"><div class="cat-slit"></div></div>
+          <div class="cat-eye-shine"></div>
+        </div>
+        <div class="cat-eye cat-eye-r">
+          <div class="cat-iris"><div class="cat-slit"></div></div>
+          <div class="cat-eye-shine"></div>
+        </div>
+        <div class="cat-nose"></div>
+        <div class="cat-whisker cat-whisker-l1"></div>
+        <div class="cat-whisker cat-whisker-l2"></div>
+        <div class="cat-whisker cat-whisker-l3"></div>
+        <div class="cat-whisker cat-whisker-r1"></div>
+        <div class="cat-whisker cat-whisker-r2"></div>
+        <div class="cat-whisker cat-whisker-r3"></div>
+      </div>
+      <div class="cat-collar">
+        <div class="cat-bell"></div>
+      </div>
+      <div class="cat-paws">
+        <div class="cat-paw cat-paw-l"></div>
+        <div class="cat-paw cat-paw-r"></div>
+      </div>
+    </div>
 
     <!-- Title Screen -->
     <div id="title-screen" class="screen active">
