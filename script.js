@@ -165,6 +165,118 @@ const EXERCISES = [
     successMsg: "La fiole illumine la pièce ! 💎✨",
     failMsg: "La fiole s'éteint ! 💥",
   },
+  // --- Niveau Maître (11-15) : un peu de tout ---
+  {
+    id: 11,
+    level: "maitre",
+    hint: "Accorde l'adjectif ET le verbe !",
+    slots: [
+      { word: "Les", fixed: true },
+      {
+        choices: ["petites", "petit", "petite", "petits"],
+        correct: "petites",
+      },
+      { word: "sorcières", fixed: true },
+      {
+        choices: ["dansent", "danse", "danser", "dansé"],
+        correct: "dansent",
+      },
+    ],
+    successMsg: "Les sorcières font la ronde ! 💃✨",
+    failMsg: "Les sorcières trébuchent ! 💥",
+  },
+  {
+    id: 12,
+    level: "maitre",
+    hint: "Accorde le participe passé et l'adjectif !",
+    slots: [
+      { word: "La", fixed: true },
+      { word: "potion", fixed: true },
+      {
+        choices: ["dorée", "doré", "dorés", "dorées"],
+        correct: "dorée",
+      },
+      { word: "est", fixed: true },
+      {
+        choices: ["terminée", "terminé", "terminés", "terminées"],
+        correct: "terminée",
+      },
+    ],
+    successMsg: "La potion dorée est parfaite ! 🌟",
+    failMsg: "La potion dorée a tourné ! 💥",
+  },
+  {
+    id: 13,
+    level: "maitre",
+    hint: "Trouve le bon verbe et le bon adjectif !",
+    slots: [
+      { word: "Le", fixed: true },
+      {
+        choices: ["vieux", "vieille", "vieilles", "vieil"],
+        correct: "vieux",
+      },
+      { word: "grimoire", fixed: true },
+      {
+        choices: ["contient", "contiennent", "contenir", "contenu"],
+        correct: "contient",
+      },
+      { word: "un", fixed: true },
+      { word: "secret", fixed: true },
+    ],
+    successMsg: "Le grimoire révèle ses secrets ! 📖✨",
+    failMsg: "Le grimoire se referme ! 💥",
+  },
+  {
+    id: 14,
+    level: "maitre",
+    hint: "Trois accords à trouver dans cette phrase !",
+    slots: [
+      { word: "Les", fixed: true },
+      { word: "chats", fixed: true },
+      {
+        choices: ["noirs", "noir", "noire", "noires"],
+        correct: "noirs",
+      },
+      {
+        choices: ["sont", "est", "être", "étaient"],
+        correct: "sont",
+      },
+      {
+        choices: ["cachés", "caché", "cachée", "cachées"],
+        correct: "cachés",
+      },
+    ],
+    successMsg: "Les chats sortent de l'ombre ! 🐈‍⬛✨",
+    failMsg: "Les chats s'enfuient ! 💥",
+  },
+  {
+    id: 15,
+    level: "maitre",
+    hint: "La phrase finale ! Accorde tout correctement !",
+    slots: [
+      { word: "Les", fixed: true },
+      {
+        choices: ["grandes", "grand", "grande", "grands"],
+        correct: "grandes",
+      },
+      { word: "potions", fixed: true },
+      {
+        choices: ["magiques", "magique", "magiqués", "magiquée"],
+        correct: "magiques",
+      },
+      {
+        choices: ["ont", "a", "avons", "avez"],
+        correct: "ont",
+      },
+      { word: "été", fixed: true },
+      {
+        choices: ["créées", "créé", "créée", "créés"],
+        correct: "créées",
+      },
+    ],
+    successMsg: "Tu es un vrai maître alchimiste ! 🏆🎉",
+    failMsg: "La formule magique a échoué ! 💥",
+  },
 ];
 
 // ===== DOM Elements =====

@@ -142,11 +142,6 @@ body {
   color: var(--accent-gold);
 }
 
-.level-age {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
 .level-desc {
   font-size: 0.75rem;
   color: var(--text-muted);
