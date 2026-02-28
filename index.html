@@ -22,6 +22,7 @@
       <div class="title-content">
         <h1 class="title">L'Atelier de Potions</h1>
         <p class="subtitle">Potions Grammaticales</p>
+        <div id="total-score" class="total-score">🧪 <span id="total-score-count">0</span> potions réussies</div>
         <div class="level-select">
           <button class="btn-level" data-level="apprenti">
             <span class="level-icon">🧪</span>
@@ -45,6 +46,12 @@
     <!-- Game Screen -->
     <div id="game-screen" class="screen">
       <div class="game-overlay">
+        <!-- Top bar: score + back button -->
+        <div class="game-top-bar">
+          <div id="game-score" class="game-score">🧪 <span id="game-score-count">0</span></div>
+          <button id="btn-back" class="btn-back" title="Menu principal">✕</button>
+        </div>
+
         <!-- Progress bar -->
         <div id="progress-bar" class="progress-bar">
           <!-- Filled dynamically -->

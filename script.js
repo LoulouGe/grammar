@@ -294,6 +294,25 @@ const resultsScore = document.getElementById("results-score");
 const resultsMessage = document.getElementById("results-message");
 const btnReplay = document.getElementById("btn-replay");
 const btnMenu = document.getElementById("btn-menu");
+const totalScoreCount = document.getElementById("total-score-count");
+const gameScoreEl = document.getElementById("game-score");
+const gameScoreCount = document.getElementById("game-score-count");
+const btnBack = document.getElementById("btn-back");
+
+// ===== Persistent Score (localStorage) =====
+function getTotalScore() {
+  return parseInt(localStorage.getItem("potions-total-score") || "0", 10);
+}
+
+function addToTotalScore(points) {
+  const total = getTotalScore() + points;
+  localStorage.setItem("potions-total-score", total.toString());
+  return total;
+}
+
+function refreshTotalScore() {
+  totalScoreCount.textContent = getTotalScore();
+}
 
 // ===== Game State =====
 let currentLevel = "apprenti";
@@ -306,6 +325,7 @@ let activeSlotIndex = null; // which choice slot is being filled
 // ===== Three.js Scene =====
 let scene, camera, renderer;
 let cauldron, liquid, cauldronGroup;
+let wizardGroup, wizardArm, catGroup, catTail;
 let bubbles = [];
 let effectParticles = [];
 let clock;
@@ -358,8 +378,10 @@ function initThree() {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Build cauldron
+  // Build scene elements
   buildCauldron();
+  buildWizard();
+  buildCat();
 
   // Start bubbles
   for (let i = 0; i < 12; i++) {
@@ -473,6 +495,243 @@ function buildCauldron() {
   scene.add(cauldronGroup);
 }
 
+function buildWizard() {
+  wizardGroup = new THREE.Group();
+  const robeMat = new THREE.MeshStandardMaterial({
+    color: 0x2a1555,
+    roughness: 0.7,
+  });
+  const skinMat = new THREE.MeshStandardMaterial({
+    color: 0xf0c8a0,
+    roughness: 0.8,
+  });
+  const hatMat = new THREE.MeshStandardMaterial({
+    color: 0x1a0e3e,
+    roughness: 0.6,
+  });
+
+  // Robe (body) — cone
+  const robeGeo = new THREE.ConeGeometry(0.45, 1.4, 12);
+  const robe = new THREE.Mesh(robeGeo, robeMat);
+  robe.position.y = 0.7;
+  wizardGroup.add(robe);
+
+  // Head
+  const headGeo = new THREE.SphereGeometry(0.22, 12, 12);
+  const head = new THREE.Mesh(headGeo, skinMat);
+  head.position.y = 1.55;
+  wizardGroup.add(head);
+
+  // Eyes
+  const eyeMat = new THREE.MeshStandardMaterial({
+    color: 0x222222,
+    roughness: 0.5,
+  });
+  const eyeGeo = new THREE.SphereGeometry(0.035, 6, 6);
+  const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+  eyeL.position.set(-0.08, 1.58, 0.19);
+  wizardGroup.add(eyeL);
+  const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+  eyeR.position.set(0.08, 1.58, 0.19);
+  wizardGroup.add(eyeR);
+
+  // Nose
+  const noseGeo = new THREE.ConeGeometry(0.04, 0.1, 6);
+  const nose = new THREE.Mesh(noseGeo, skinMat);
+  nose.position.set(0, 1.52, 0.22);
+  nose.rotation.x = -Math.PI / 2;
+  wizardGroup.add(nose);
+
+  // Beard
+  const beardGeo = new THREE.ConeGeometry(0.14, 0.4, 8);
+  const beardMat = new THREE.MeshStandardMaterial({
+    color: 0xcccccc,
+    roughness: 0.9,
+  });
+  const beard = new THREE.Mesh(beardGeo, beardMat);
+  beard.position.set(0, 1.28, 0.1);
+  beard.rotation.x = 0.15;
+  wizardGroup.add(beard);
+
+  // Hat — pointed wizard hat
+  const hatBrimGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.04, 16);
+  const hatBrim = new THREE.Mesh(hatBrimGeo, hatMat);
+  hatBrim.position.y = 1.72;
+  wizardGroup.add(hatBrim);
+
+  const hatConeGeo = new THREE.ConeGeometry(0.25, 0.6, 12);
+  const hatCone = new THREE.Mesh(hatConeGeo, hatMat);
+  hatCone.position.y = 2.04;
+  hatCone.rotation.z = 0.1; // slight tilt
+  wizardGroup.add(hatCone);
+
+  // Hat star
+  const starMat = new THREE.MeshStandardMaterial({
+    color: 0xf0c040,
+    emissive: 0xf0c040,
+    emissiveIntensity: 0.5,
+  });
+  const starGeo = new THREE.SphereGeometry(0.04, 6, 6);
+  const star = new THREE.Mesh(starGeo, starMat);
+  star.position.set(0.08, 1.88, 0.2);
+  wizardGroup.add(star);
+
+  // Arm + staff (stirring arm) — pivots from shoulder
+  wizardArm = new THREE.Group();
+  wizardArm.position.set(-0.3, 1.2, 0);
+
+  // Upper arm
+  const armGeo = new THREE.CylinderGeometry(0.05, 0.04, 0.5, 6);
+  const arm = new THREE.Mesh(armGeo, robeMat);
+  arm.position.set(0, -0.15, 0.2);
+  arm.rotation.x = Math.PI / 3;
+  wizardArm.add(arm);
+
+  // Staff
+  const staffGeo = new THREE.CylinderGeometry(0.025, 0.03, 1.2, 6);
+  const staffMat = new THREE.MeshStandardMaterial({
+    color: 0x6b3a1f,
+    roughness: 0.7,
+  });
+  const staff = new THREE.Mesh(staffGeo, staffMat);
+  staff.position.set(0, -0.45, 0.55);
+  staff.rotation.x = Math.PI / 2.8;
+  wizardArm.add(staff);
+
+  // Staff tip glow
+  const tipMat = new THREE.MeshStandardMaterial({
+    color: 0xaa66ff,
+    emissive: 0x7733cc,
+    emissiveIntensity: 1,
+  });
+  const tipGeo = new THREE.SphereGeometry(0.05, 6, 6);
+  const tip = new THREE.Mesh(tipGeo, tipMat);
+  tip.position.set(0, -0.75, 0.85);
+  wizardArm.add(tip);
+
+  wizardGroup.add(wizardArm);
+
+  // Position wizard to the right of cauldron
+  wizardGroup.position.set(1.8, -1.2, 0.3);
+  wizardGroup.rotation.y = -0.4; // face the cauldron
+  scene.add(wizardGroup);
+}
+
+function buildCat() {
+  catGroup = new THREE.Group();
+  const catMat = new THREE.MeshStandardMaterial({
+    color: 0x1a1a1a,
+    roughness: 0.8,
+  });
+
+  // Body — elongated sphere
+  const bodyGeo = new THREE.SphereGeometry(0.25, 12, 10);
+  const body = new THREE.Mesh(bodyGeo, catMat);
+  body.scale.set(1, 0.8, 1.5);
+  body.position.y = 0.25;
+  catGroup.add(body);
+
+  // Head
+  const headGeo = new THREE.SphereGeometry(0.18, 12, 10);
+  const head = new THREE.Mesh(headGeo, catMat);
+  head.position.set(0, 0.4, 0.3);
+  catGroup.add(head);
+
+  // Ears
+  const earGeo = new THREE.ConeGeometry(0.06, 0.12, 4);
+  const earL = new THREE.Mesh(earGeo, catMat);
+  earL.position.set(-0.1, 0.57, 0.28);
+  earL.rotation.z = -0.2;
+  catGroup.add(earL);
+  const earR = new THREE.Mesh(earGeo, catMat);
+  earR.position.set(0.1, 0.57, 0.28);
+  earR.rotation.z = 0.2;
+  catGroup.add(earR);
+
+  // Inner ears (pink)
+  const innerEarMat = new THREE.MeshStandardMaterial({
+    color: 0x995566,
+    roughness: 0.8,
+  });
+  const innerEarGeo = new THREE.ConeGeometry(0.03, 0.07, 4);
+  const innerEarL = new THREE.Mesh(innerEarGeo, innerEarMat);
+  innerEarL.position.set(-0.1, 0.56, 0.3);
+  innerEarL.rotation.z = -0.2;
+  catGroup.add(innerEarL);
+  const innerEarR = new THREE.Mesh(innerEarGeo, innerEarMat);
+  innerEarR.position.set(0.1, 0.56, 0.3);
+  innerEarR.rotation.z = 0.2;
+  catGroup.add(innerEarR);
+
+  // Eyes — glowing green
+  const eyeMat = new THREE.MeshStandardMaterial({
+    color: 0x44ff66,
+    emissive: 0x22cc44,
+    emissiveIntensity: 0.8,
+  });
+  const eyeGeo = new THREE.SphereGeometry(0.035, 8, 8);
+  const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+  eyeL.position.set(-0.07, 0.43, 0.45);
+  catGroup.add(eyeL);
+  const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+  eyeR.position.set(0.07, 0.43, 0.45);
+  catGroup.add(eyeR);
+
+  // Pupils — vertical slits
+  const pupilMat = new THREE.MeshStandardMaterial({
+    color: 0x000000,
+    roughness: 0.5,
+  });
+  const pupilGeo = new THREE.SphereGeometry(0.018, 4, 6);
+  const pupilL = new THREE.Mesh(pupilGeo, pupilMat);
+  pupilL.scale.set(0.5, 1, 1);
+  pupilL.position.set(-0.07, 0.43, 0.48);
+  catGroup.add(pupilL);
+  const pupilR = new THREE.Mesh(pupilGeo, pupilMat);
+  pupilR.scale.set(0.5, 1, 1);
+  pupilR.position.set(0.07, 0.43, 0.48);
+  catGroup.add(pupilR);
+
+  // Nose (tiny pink triangle)
+  const noseGeo = new THREE.ConeGeometry(0.02, 0.03, 3);
+  const noseMat = new THREE.MeshStandardMaterial({
+    color: 0xdd8899,
+    roughness: 0.7,
+  });
+  const nose = new THREE.Mesh(noseGeo, noseMat);
+  nose.position.set(0, 0.39, 0.47);
+  nose.rotation.x = Math.PI;
+  catGroup.add(nose);
+
+  // Tail — chain of spheres in a curve
+  catTail = new THREE.Group();
+  const tailSegments = 8;
+  for (let i = 0; i < tailSegments; i++) {
+    const t = i / (tailSegments - 1);
+    const segGeo = new THREE.SphereGeometry(0.035 - t * 0.015, 6, 6);
+    const seg = new THREE.Mesh(segGeo, catMat);
+    seg.position.set(0, 0.2 + t * 0.5, -0.3 - t * 0.3);
+    catTail.add(seg);
+  }
+  catGroup.add(catTail);
+
+  // Front paws
+  const pawGeo = new THREE.SphereGeometry(0.06, 6, 6);
+  const pawL = new THREE.Mesh(pawGeo, catMat);
+  pawL.scale.y = 0.5;
+  pawL.position.set(-0.1, 0.06, 0.3);
+  catGroup.add(pawL);
+  const pawR = new THREE.Mesh(pawGeo, catMat);
+  pawR.scale.y = 0.5;
+  pawR.position.set(0.1, 0.06, 0.3);
+  catGroup.add(pawR);
+
+  // Position cat to the left of cauldron, facing right (toward cauldron)
+  catGroup.position.set(-1.8, -1.2, 0.5);
+  catGroup.rotation.y = 0.5; // look toward cauldron
+  scene.add(catGroup);
+}
+
 function spawnBubble() {
   const geo = new THREE.SphereGeometry(
     0.03 + Math.random() * 0.05,
@@ -511,6 +770,22 @@ function animate() {
   // Liquid wobble
   if (liquid) {
     liquid.position.y = 0.55 + Math.sin(t * 2) * 0.02;
+  }
+
+  // Wizard stirring animation
+  if (wizardArm) {
+    wizardArm.rotation.y = Math.sin(t * 1.5) * 0.3;
+  }
+  if (wizardGroup) {
+    wizardGroup.children[1].position.y = 1.55 + Math.sin(t * 2) * 0.01; // head bob
+  }
+
+  // Cat tail sway
+  if (catTail) {
+    catTail.children.forEach((seg, i) => {
+      const phase = i * 0.3;
+      seg.position.x = Math.sin(t * 2 + phase) * 0.05 * (i / catTail.children.length);
+    });
   }
 
   // Bubbles
@@ -943,6 +1218,7 @@ function startGame(level) {
   exercises = EXERCISES.filter((e) => e.level === level);
   currentExIndex = 0;
   score = 0;
+  gameScoreCount.textContent = "0";
   showScreen(gameScreen);
   buildProgressBar();
   loadExercise();
@@ -1139,7 +1415,14 @@ function validateAnswer() {
     }
   });
 
-  if (correct) score++;
+  if (correct) {
+    score++;
+    gameScoreCount.textContent = score;
+    // Pop animation
+    gameScoreEl.classList.remove("pop");
+    void gameScoreEl.offsetWidth; // force reflow
+    gameScoreEl.classList.add("pop");
+  }
 
   // Disable further interaction immediately
   btnValidate.disabled = true;
@@ -1196,6 +1479,9 @@ function showFeedback(msg, type) {
 }
 
 function showResults() {
+  // Save to localStorage
+  addToTotalScore(score);
+
   showScreen(resultsScreen);
   const total = exercises.length;
   const ratio = score / total;
@@ -1258,8 +1544,17 @@ btnReplay.addEventListener("click", () => {
 });
 
 btnMenu.addEventListener("click", () => {
+  refreshTotalScore();
+  showScreen(titleScreen);
+});
+
+btnBack.addEventListener("click", () => {
+  // Save partial score before quitting
+  if (score > 0) addToTotalScore(score);
+  refreshTotalScore();
   showScreen(titleScreen);
 });
 
 // ===== Init =====
+refreshTotalScore();
 initThree();

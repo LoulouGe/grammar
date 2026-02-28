@@ -99,6 +99,23 @@ body {
   }
 }
 
+/* Total score on title screen */
+.total-score {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--accent-gold);
+  background: rgba(45, 27, 78, 0.7);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  border: 1px solid var(--card-border);
+  display: inline-block;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(4px);
+}
+
+.total-score span {
+  font-weight: 700;
+}
+
 .level-select {
   display: flex;
   gap: 1.5rem;
@@ -163,6 +180,66 @@ body {
 
 .game-overlay > * {
   pointer-events: auto;
+}
+
+/* Top bar (score + back) */
+.game-top-bar {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+}
+
+.btn-back {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: rgba(26, 14, 46, 0.8);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+}
+
+.btn-back:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* In-game score counter */
+.game-score {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 700;
+  color: var(--accent-gold);
+  background: rgba(26, 14, 46, 0.8);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(4px);
+}
+
+.game-score span {
+  transition: all 0.3s ease;
+}
+
+.game-score.pop span {
+  animation: scorePop 0.4s ease;
+}
+
+@keyframes scorePop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); color: var(--accent-green); }
+  100% { transform: scale(1); }
 }
 
 /* Progress bar */
