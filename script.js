@@ -1325,8 +1325,17 @@ function shuffleArray(arr) {
 }
 
 // ===== Event Listeners =====
+function requestFullscreen() {
+  const el = document.documentElement;
+  const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (rfs && !document.fullscreenElement && !document.webkitFullscreenElement) {
+    rfs.call(el).catch(() => {});
+  }
+}
+
 document.querySelectorAll(".btn-level").forEach((btn) => {
   btn.addEventListener("click", () => {
+    requestFullscreen();
     startGame(btn.dataset.level);
   });
 });
