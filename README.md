@@ -2,6 +2,8 @@
 
 Jeu éducatif pour apprendre les accords grammaticaux en français. L'enfant est un alchimiste qui assemble des mots-ingrédients pour créer des potions. Les accords corrects font scintiller la potion, les erreurs font exploser le chaudron !
 
+Un magicien mélange la potion avec son bâton, accompagné de son chat noir aux yeux verts.
+
 ## Comment jouer
 
 1. Choisis un niveau : **Apprenti**, **Alchimiste** ou **Maître**
@@ -9,6 +11,7 @@ Jeu éducatif pour apprendre les accords grammaticaux en français. L'enfant est
 3. Clique sur les mots pour remplir les cases manquantes
 4. Appuie sur **"Lancer la potion !"**
 5. Regarde l'Erlenmeyer verser son contenu dans le chaudron...
+6. Ton score total de potions réussies 🧪 est sauvegardé entre les parties !
 
 ## Les niveaux
 
@@ -33,3 +36,4 @@ python3 -m http.server 8080
 - HTML / CSS / JavaScript (vanilla, aucune dépendance)
 - [Three.js](https://threejs.org/) r128 (CDN) pour la scène 3D
 - Google Fonts : Playfair Display, Poppins
+- localStorage pour la persistance du score

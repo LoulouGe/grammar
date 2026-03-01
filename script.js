@@ -277,6 +277,144 @@ const EXERCISES = [
     successMsg: "Tu es un vrai maître alchimiste ! 🏆🎉",
     failMsg: "La formule magique a échoué ! 💥",
   },
+  // --- Niveau Archimage (16-20) ---
+  {
+    id: 16,
+    level: "archimage",
+    hint: "Construis toute la phrase ! Une sorcière et sa potion…",
+    slots: [
+      { choices: ["La", "Le", "Les", "Un"], correct: "La" },
+      { choices: ["sorcière", "sorcier", "sorcières", "sorciers"], correct: "sorcière" },
+      { choices: ["prépare", "préparent", "prépares", "préparons"], correct: "prépare" },
+      { choices: ["une", "un", "des", "le"], correct: "une" },
+      { choices: ["potion", "potions", "poison", "potionnes"], correct: "potion" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2], valid: [
+        ["La", "sorcière", "prépare"],
+        ["Le", "sorcier", "prépare"],
+        ["Les", "sorcières", "préparent"],
+        ["Les", "sorciers", "préparent"],
+        ["Un", "sorcier", "prépare"],
+      ]},
+      { slots: [3, 4], valid: [
+        ["une", "potion"],
+        ["un", "poison"],
+        ["des", "potions"],
+        ["le", "poison"],
+      ]},
+    ],
+    successMsg: "La sorcière te félicite ! 🧙‍♀️✨",
+    failMsg: "La potion tourne au vinaigre ! 💥",
+  },
+  {
+    id: 17,
+    level: "archimage",
+    hint: "Construis toute la phrase ! Des dragons redoutables…",
+    slots: [
+      { choices: ["Les", "Le", "La", "Des"], correct: "Les" },
+      { choices: ["dragons", "dragon", "dragones", "dragonnes"], correct: "dragons" },
+      { choices: ["crachent", "crache", "crachons", "crachez"], correct: "crachent" },
+      { choices: ["des", "de", "les", "une"], correct: "des" },
+      { choices: ["flammes", "flamme", "flammés", "flammées"], correct: "flammes" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2], valid: [
+        ["Le", "dragon", "crache"],
+        ["Les", "dragons", "crachent"],
+        ["Des", "dragons", "crachent"],
+      ]},
+      { slots: [3, 4], valid: [
+        ["des", "flammes"],
+        ["les", "flammes"],
+        ["une", "flamme"],
+      ]},
+    ],
+    successMsg: "Les dragons t'acclament ! 🐉🔥",
+    failMsg: "Les dragons sont déçus ! 💥",
+  },
+  {
+    id: 18,
+    level: "archimage",
+    hint: "Construis toute la phrase ! Un chat fait la sieste…",
+    slots: [
+      { choices: ["Le", "La", "Les", "Un"], correct: "Le" },
+      { choices: ["petit", "petite", "petits", "petites"], correct: "petit" },
+      { choices: ["chat", "chatte", "chats", "chattes"], correct: "chat" },
+      { choices: ["noir", "noire", "noirs", "noires"], correct: "noir" },
+      { choices: ["dort", "dorment", "dors", "dormons"], correct: "dort" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2, 3, 4], valid: [
+        ["Le", "petit", "chat", "noir", "dort"],
+        ["La", "petite", "chatte", "noire", "dort"],
+        ["Les", "petits", "chats", "noirs", "dorment"],
+        ["Les", "petites", "chattes", "noires", "dorment"],
+        ["Un", "petit", "chat", "noir", "dort"],
+      ]},
+    ],
+    successMsg: "Le chat ronronne de bonheur ! 🐱💤",
+    failMsg: "Le chat s'enfuit ! 💥",
+  },
+  {
+    id: 19,
+    level: "archimage",
+    hint: "Construis toute la phrase ! De grandes sorcières à l'œuvre…",
+    slots: [
+      { choices: ["Les", "Le", "La", "Des"], correct: "Les" },
+      { choices: ["grandes", "grand", "grande", "grands"], correct: "grandes" },
+      { choices: ["sorcières", "sorcière", "sorciers", "sorcier"], correct: "sorcières" },
+      { choices: ["préparent", "prépare", "préparons", "préparez"], correct: "préparent" },
+      { choices: ["des", "de", "les", "une"], correct: "des" },
+      { choices: ["potions", "potion", "potionnes", "potionnés"], correct: "potions" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2, 3], valid: [
+        ["La", "grande", "sorcière", "prépare"],
+        ["Le", "grand", "sorcier", "prépare"],
+        ["Les", "grandes", "sorcières", "préparent"],
+        ["Les", "grands", "sorciers", "préparent"],
+      ]},
+      { slots: [4, 5], valid: [
+        ["des", "potions"],
+        ["les", "potions"],
+        ["une", "potion"],
+      ]},
+    ],
+    successMsg: "Le cercle de sorcières applaudit ! 🧙‍♀️🧙‍♀️✨",
+    failMsg: "Le cercle est rompu ! 💥",
+  },
+  {
+    id: 20,
+    level: "archimage",
+    hint: "La phrase ultime ! Auxiliaire, participe passé et adjectif…",
+    slots: [
+      { choices: ["La", "Le", "Les", "Un"], correct: "La" },
+      { choices: ["belle", "beau", "belles", "beaux"], correct: "belle" },
+      { choices: ["sorcière", "sorcier", "sorcières", "sorciers"], correct: "sorcière" },
+      { choices: ["a", "ont", "avons", "as"], correct: "a" },
+      { choices: ["préparé", "préparée", "préparés", "préparées"], correct: "préparé" },
+      { choices: ["une", "un", "des", "le"], correct: "une" },
+      { choices: ["potion", "potions", "poison", "potionnes"], correct: "potion" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2, 3, 4], valid: [
+        ["La", "belle", "sorcière", "a", "préparé"],
+        ["Le", "beau", "sorcier", "a", "préparé"],
+        ["Les", "belles", "sorcières", "ont", "préparé"],
+        ["Les", "beaux", "sorciers", "ont", "préparé"],
+        ["Un", "beau", "sorcier", "a", "préparé"],
+      ]},
+      { slots: [5, 6], valid: [
+        ["une", "potion"],
+        ["un", "poison"],
+        ["des", "potions"],
+        ["le", "poison"],
+      ]},
+    ],
+    successMsg: "Tu es un véritable Archimage ! 👑🎉",
+    failMsg: "L'incantation suprême a échoué ! 💥",
+  },
 ];
 
 // ===== DOM Elements =====
@@ -294,6 +432,25 @@ const resultsScore = document.getElementById("results-score");
 const resultsMessage = document.getElementById("results-message");
 const btnReplay = document.getElementById("btn-replay");
 const btnMenu = document.getElementById("btn-menu");
+const totalScoreCount = document.getElementById("total-score-count");
+const gameScoreEl = document.getElementById("game-score");
+const gameScoreCount = document.getElementById("game-score-count");
+const btnBack = document.getElementById("btn-back");
+
+// ===== Persistent Score (localStorage) =====
+function getTotalScore() {
+  return parseInt(localStorage.getItem("potions-total-score") || "0", 10);
+}
+
+function addToTotalScore(points) {
+  const total = getTotalScore() + points;
+  localStorage.setItem("potions-total-score", total.toString());
+  return total;
+}
+
+function refreshTotalScore() {
+  totalScoreCount.textContent = getTotalScore();
+}
 
 // ===== Game State =====
 let currentLevel = "apprenti";
@@ -305,7 +462,6 @@ let activeSlotIndex = null; // which choice slot is being filled
 
 // ===== Three.js Scene =====
 let scene, camera, renderer;
-let cauldron, liquid, cauldronGroup;
 let bubbles = [];
 let effectParticles = [];
 let clock;
@@ -316,8 +472,7 @@ function initThree() {
   clock = new THREE.Clock();
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x1a0e2e);
-  scene.fog = new THREE.FogExp2(0x1a0e2e, 0.04);
+  // No scene.background or fog — canvas is transparent over CSS backdrop
 
   camera = new THREE.PerspectiveCamera(
     50,
@@ -328,38 +483,24 @@ function initThree() {
   camera.position.set(0, 2, 6);
   camera.lookAt(0, 0.5, 0);
 
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setClearColor(0x000000, 0);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
 
-  // Lights
-  const ambient = new THREE.AmbientLight(0x6633aa, 0.4);
+  // Lights — warm workshop ambiance
+  const ambient = new THREE.AmbientLight(0xffcc88, 0.7);
   scene.add(ambient);
 
-  const mainLight = new THREE.PointLight(0xf0c040, 0.8, 20);
+  const mainLight = new THREE.PointLight(0xffc845, 1.0, 25);
   mainLight.position.set(2, 4, 3);
   mainLight.castShadow = true;
   scene.add(mainLight);
 
-  const fillLight = new THREE.PointLight(0x4444ff, 0.3, 15);
+  const fillLight = new THREE.PointLight(0xb476f0, 0.3, 18);
   fillLight.position.set(-3, 2, -2);
   scene.add(fillLight);
-
-  // Ground glow
-  const groundGeo = new THREE.CircleGeometry(8, 32);
-  const groundMat = new THREE.MeshStandardMaterial({
-    color: 0x2d1b4e,
-    roughness: 1,
-  });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -1.2;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  // Build cauldron
-  buildCauldron();
 
   // Start bubbles
   for (let i = 0; i < 12; i++) {
@@ -370,108 +511,7 @@ function initThree() {
   animate();
 }
 
-function buildCauldron() {
-  cauldronGroup = new THREE.Group();
 
-  // Rounded pot-belly profile (classic witch cauldron shape)
-  const profile = [];
-  // Bottom center → belly → narrower opening
-  // Each Vector2(x = radius, y = height)
-  profile.push(new THREE.Vector2(0.0, -0.7));   // bottom center
-  profile.push(new THREE.Vector2(0.25, -0.68));  // bottom curve start
-  profile.push(new THREE.Vector2(0.5, -0.6));    // bottom rounding
-  profile.push(new THREE.Vector2(0.75, -0.45));  // lower belly
-  profile.push(new THREE.Vector2(0.95, -0.2));   // widest belly
-  profile.push(new THREE.Vector2(1.0, 0.0));     // max width
-  profile.push(new THREE.Vector2(0.97, 0.2));    // upper belly
-  profile.push(new THREE.Vector2(0.88, 0.4));    // narrowing toward top
-  profile.push(new THREE.Vector2(0.82, 0.55));   // near rim
-  profile.push(new THREE.Vector2(0.80, 0.6));    // inner rim
-  // Lip/rim flare
-  profile.push(new THREE.Vector2(0.85, 0.65));   // rim out
-  profile.push(new THREE.Vector2(0.88, 0.68));   // rim top outer
-  profile.push(new THREE.Vector2(0.85, 0.72));   // rim top
-  profile.push(new THREE.Vector2(0.78, 0.7));    // rim inner edge
-
-  const bodyGeo = new THREE.LatheGeometry(profile, 32);
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0x2a2a2a,
-    metalness: 0.4,
-    roughness: 0.5,
-  });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.castShadow = true;
-  cauldronGroup.add(body);
-
-  // Thick rim torus on top for the classic lip
-  const rimGeo = new THREE.TorusGeometry(0.82, 0.07, 10, 32);
-  const rimMat = new THREE.MeshStandardMaterial({
-    color: 0x3a3a3a,
-    metalness: 0.5,
-    roughness: 0.35,
-  });
-  const rim = new THREE.Mesh(rimGeo, rimMat);
-  rim.rotation.x = Math.PI / 2;
-  rim.position.y = 0.68;
-  cauldronGroup.add(rim);
-
-  // Handle left
-  const handleGeoL = new THREE.TorusGeometry(0.22, 0.04, 8, 16, Math.PI);
-  const handleMat = new THREE.MeshStandardMaterial({
-    color: 0x3a3a3a,
-    metalness: 0.5,
-    roughness: 0.4,
-  });
-  const handleL = new THREE.Mesh(handleGeoL, handleMat);
-  handleL.position.set(-0.92, 0.45, 0);
-  handleL.rotation.z = Math.PI / 2;
-  handleL.rotation.y = Math.PI / 2;
-  cauldronGroup.add(handleL);
-
-  // Handle right
-  const handleR = new THREE.Mesh(handleGeoL, handleMat);
-  handleR.position.set(0.92, 0.45, 0);
-  handleR.rotation.z = -Math.PI / 2;
-  handleR.rotation.y = Math.PI / 2;
-  cauldronGroup.add(handleR);
-
-  // Liquid
-  const liquidGeo = new THREE.CircleGeometry(0.76, 32);
-  const liquidMat = new THREE.MeshStandardMaterial({
-    color: 0x44dd88,
-    transparent: true,
-    opacity: 0.7,
-    emissive: 0x22aa55,
-    emissiveIntensity: 0.3,
-    side: THREE.DoubleSide,
-  });
-  liquid = new THREE.Mesh(liquidGeo, liquidMat);
-  liquid.rotation.x = -Math.PI / 2;
-  liquid.position.y = 0.55;
-  cauldronGroup.add(liquid);
-
-  // Three stubby feet
-  for (let i = 0; i < 3; i++) {
-    const angle = (i * Math.PI * 2) / 3 + Math.PI / 6;
-    const footGeo = new THREE.SphereGeometry(0.12, 10, 10);
-    const footMat = new THREE.MeshStandardMaterial({
-      color: 0x2a2a2a,
-      metalness: 0.4,
-      roughness: 0.5,
-    });
-    const foot = new THREE.Mesh(footGeo, footMat);
-    foot.scale.y = 0.6; // squash into a stubby foot
-    foot.position.set(
-      Math.cos(angle) * 0.55,
-      -0.78,
-      Math.sin(angle) * 0.55
-    );
-    cauldronGroup.add(foot);
-  }
-
-  cauldronGroup.position.y = 0;
-  scene.add(cauldronGroup);
-}
 
 function spawnBubble() {
   const geo = new THREE.SphereGeometry(
@@ -508,11 +548,6 @@ function animate() {
   const dt = clock.getDelta();
   const t = clock.getElapsedTime();
 
-  // Liquid wobble
-  if (liquid) {
-    liquid.position.y = 0.55 + Math.sin(t * 2) * 0.02;
-  }
-
   // Bubbles
   for (const b of bubbles) {
     b.position.y += b.userData.speed * dt;
@@ -533,21 +568,6 @@ function animate() {
     if (p.userData.life <= 0) {
       scene.remove(p);
       effectParticles.splice(i, 1);
-    }
-  }
-
-  // Cauldron shake
-  if (cauldronGroup && cauldronGroup.userData.shake) {
-    const s = cauldronGroup.userData.shake;
-    s.elapsed += dt;
-    if (s.elapsed < s.duration) {
-      const intensity = s.intensity * (1 - s.elapsed / s.duration);
-      cauldronGroup.position.x = (Math.random() - 0.5) * intensity;
-      cauldronGroup.position.z = (Math.random() - 0.5) * intensity;
-    } else {
-      cauldronGroup.position.x = 0;
-      cauldronGroup.position.z = 0;
-      cauldronGroup.userData.shake = null;
     }
   }
 
@@ -703,6 +723,7 @@ function pourVialAnimation(isCorrect, onDone) {
       } else {
         failEffect();
       }
+      triggerCharacterReaction(isCorrect);
       if (onDone) onDone();
       return;
     }
@@ -761,16 +782,15 @@ function successEffect() {
   }
   pulseGlow();
 
-  // Liquid glows bright
-  if (liquid) {
-    liquid.material.color.set(0x66ffaa);
-    liquid.material.emissive.set(0x44ff88);
-    liquid.material.emissiveIntensity = 2;
+  // Swap cauldron image to sparkle version
+  const cauldronEl = document.getElementById("cauldron-2d");
+  if (cauldronEl) {
+    cauldronEl.src = "assets/cauldron-sparkle.png";
+    cauldronEl.classList.add("cauldron-success");
     setTimeout(() => {
-      liquid.material.color.set(0x44dd88);
-      liquid.material.emissive.set(0x22aa55);
-      liquid.material.emissiveIntensity = 0.3;
-    }, 2000);
+      cauldronEl.classList.remove("cauldron-success");
+      cauldronEl.src = "assets/cauldron.png";
+    }, 2500);
   }
 
   // Golden sparkle particles — burst upward from cauldron
@@ -850,16 +870,15 @@ function failEffect() {
   }
   pulseFlash();
 
-  // Liquid turns angry red / bubbling
-  if (liquid) {
-    liquid.material.color.set(0xff2222);
-    liquid.material.emissive.set(0xcc0000);
-    liquid.material.emissiveIntensity = 2;
+  // Swap cauldron image to explosion version
+  const cauldronEl = document.getElementById("cauldron-2d");
+  if (cauldronEl) {
+    cauldronEl.src = "assets/cauldron-explode.png";
+    cauldronEl.classList.add("cauldron-fail");
     setTimeout(() => {
-      liquid.material.color.set(0x44dd88);
-      liquid.material.emissive.set(0x22aa55);
-      liquid.material.emissiveIntensity = 0.3;
-    }, 2000);
+      cauldronEl.classList.remove("cauldron-fail");
+      cauldronEl.src = "assets/cauldron.png";
+    }, 2500);
   }
 
   // Explosion particles — big burst outward
@@ -921,12 +940,41 @@ function failEffect() {
     effectParticles.push(p);
   }
 
-  // Heavy shake
-  cauldronGroup.userData.shake = {
-    intensity: 0.25,
-    duration: 0.8,
-    elapsed: 0,
-  };
+  // Shake the 2D cauldron
+  const cauldronShake = document.getElementById("cauldron-2d");
+  if (cauldronShake) {
+    cauldronShake.classList.add("cauldron-shake");
+    setTimeout(() => cauldronShake.classList.remove("cauldron-shake"), 800);
+  }
+}
+
+// ===== 2D Character Reactions =====
+function triggerCharacterReaction(isCorrect) {
+  const wizard = document.getElementById("wizard-2d");
+  const cat = document.getElementById("cat-2d");
+  if (!wizard || !cat) return;
+
+  // Remove any existing reaction classes
+  wizard.classList.remove("wizard-celebrate", "wizard-worried");
+  cat.classList.remove("cat-happy", "cat-startled");
+
+  // Force reflow so re-adding the class triggers animation
+  void wizard.offsetWidth;
+  void cat.offsetWidth;
+
+  if (isCorrect) {
+    wizard.classList.add("wizard-celebrate");
+    cat.classList.add("cat-happy");
+  } else {
+    wizard.classList.add("wizard-worried");
+    cat.classList.add("cat-startled");
+  }
+
+  // Clean up after animations finish
+  setTimeout(() => {
+    wizard.classList.remove("wizard-celebrate", "wizard-worried");
+    cat.classList.remove("cat-happy", "cat-startled");
+  }, 2000);
 }
 
 // ===== Screen Management =====
@@ -943,6 +991,7 @@ function startGame(level) {
   exercises = EXERCISES.filter((e) => e.level === level);
   currentExIndex = 0;
   score = 0;
+  gameScoreCount.textContent = "0";
   showScreen(gameScreen);
   buildProgressBar();
   loadExercise();
@@ -1130,16 +1179,35 @@ function checkAllFilled() {
   btnValidate.disabled = !allFilled;
 }
 
+function isGroupValid(group, selections) {
+  const selected = group.slots.map((i) => selections[i]);
+  return group.valid.some((combo) =>
+    combo.every((val, j) => val === selected[j])
+  );
+}
+
 function validateAnswer() {
   const ex = exercises[currentExIndex];
-  let correct = true;
-  ex.slots.forEach((slot, i) => {
-    if (!slot.fixed && selections[i] !== slot.correct) {
-      correct = false;
-    }
-  });
+  let correct;
+  if (ex.agreementGroups) {
+    correct = ex.agreementGroups.every((g) => isGroupValid(g, selections));
+  } else {
+    correct = true;
+    ex.slots.forEach((slot, i) => {
+      if (!slot.fixed && selections[i] !== slot.correct) {
+        correct = false;
+      }
+    });
+  }
 
-  if (correct) score++;
+  if (correct) {
+    score++;
+    gameScoreCount.textContent = score;
+    // Pop animation
+    gameScoreEl.classList.remove("pop");
+    void gameScoreEl.offsetWidth; // force reflow
+    gameScoreEl.classList.add("pop");
+  }
 
   // Disable further interaction immediately
   btnValidate.disabled = true;
@@ -1162,7 +1230,16 @@ function validateAnswer() {
     sentenceBuilder.querySelectorAll(".slot.choice").forEach((el) => {
       const idx = parseInt(el.dataset.slotIndex);
       const slot = ex.slots[idx];
-      if (selections[idx] === slot.correct) {
+      let slotOk;
+      if (correct) {
+        slotOk = true;
+      } else if (ex.agreementGroups) {
+        const group = ex.agreementGroups.find((g) => g.slots.includes(idx));
+        slotOk = group ? isGroupValid(group, selections) : selections[idx] === slot.correct;
+      } else {
+        slotOk = selections[idx] === slot.correct;
+      }
+      if (slotOk) {
         el.style.borderColor = "var(--accent-green)";
         el.style.background = "rgba(74, 222, 128, 0.2)";
         el.style.color = "var(--accent-green)";
@@ -1196,6 +1273,9 @@ function showFeedback(msg, type) {
 }
 
 function showResults() {
+  // Save to localStorage
+  addToTotalScore(score);
+
   showScreen(resultsScreen);
   const total = exercises.length;
   const ratio = score / total;
@@ -1258,8 +1338,17 @@ btnReplay.addEventListener("click", () => {
 });
 
 btnMenu.addEventListener("click", () => {
+  refreshTotalScore();
+  showScreen(titleScreen);
+});
+
+btnBack.addEventListener("click", () => {
+  // Save partial score before quitting
+  if (score > 0) addToTotalScore(score);
+  refreshTotalScore();
   showScreen(titleScreen);
 });
 
 // ===== Init =====
+refreshTotalScore();
 initThree();

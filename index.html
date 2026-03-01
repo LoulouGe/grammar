@@ -7,21 +7,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
-    <!-- Three.js canvas -->
+    <!-- Background image -->
+    <div id="scene-background"></div>
+
+    <!-- 2D Cauldron image -->
+    <img id="cauldron-2d" src="assets/cauldron.png" alt="Chaudron" />
+
+    <!-- Three.js canvas (transparent — only effects + pouring animation) -->
     <canvas id="scene"></canvas>
+
+    <!-- 2D Wizard -->
+    <img id="wizard-2d" src="assets/wizard.png" alt="Sorcier" />
+
+    <!-- 2D Cat -->
+    <img id="cat-2d" src="assets/cat.png" alt="Chat" />
 
     <!-- Title Screen -->
     <div id="title-screen" class="screen active">
       <div class="title-content">
         <h1 class="title">L'Atelier de Potions</h1>
         <p class="subtitle">Potions Grammaticales</p>
+        <div id="total-score" class="total-score">🧪 <span id="total-score-count">0</span> potions réussies</div>
         <div class="level-select">
           <button class="btn-level" data-level="apprenti">
             <span class="level-icon">🧪</span>
@@ -38,6 +51,11 @@
             <span class="level-name">Maître</span>
             <span class="level-desc">Un peu de tout !</span>
           </button>
+          <button class="btn-level" data-level="archimage">
+            <span class="level-icon">👑</span>
+            <span class="level-name">Archimage</span>
+            <span class="level-desc">Construis toute la phrase !</span>
+          </button>
         </div>
       </div>
     </div>
@@ -45,6 +63,12 @@
     <!-- Game Screen -->
     <div id="game-screen" class="screen">
       <div class="game-overlay">
+        <!-- Top bar: score + back button -->
+        <div class="game-top-bar">
+          <div id="game-score" class="game-score">🧪 <span id="game-score-count">0</span></div>
+          <button id="btn-back" class="btn-back" title="Menu principal">✕</button>
+        </div>
+
         <!-- Progress bar -->
         <div id="progress-bar" class="progress-bar">
           <!-- Filled dynamically -->
@@ -82,6 +106,14 @@
         <p id="results-message" class="results-message"></p>
         <button id="btn-replay" class="btn-replay">Rejouer</button>
         <button id="btn-menu" class="btn-menu">Menu principal</button>
+      </div>
+    </div>
+
+    <!-- Rotate overlay (portrait mobile) -->
+    <div id="rotate-overlay">
+      <div class="rotate-content">
+        <div class="rotate-icon">📱</div>
+        <p>Tourne ton écran en paysage !</p>
       </div>
     </div>
 

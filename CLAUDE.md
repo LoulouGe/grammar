@@ -45,10 +45,18 @@ Title screen → pick a level → exercises appear one by one → click word car
 ### 3D Scene
 
 - **Cauldron**: LatheGeometry with rounded witch-cauldron profile, handles, stubby feet
+- **Wizard** (right of cauldron): cone robe, sphere head, pointed hat with star, beard, stirring arm with staff — idle stirring animation
+- **Black cat** (left of cauldron): sphere body/head, cone ears with pink inner ears, glowing green eyes with slit pupils, segmented tail — idle tail sway animation
 - **Erlenmeyer flask**: LatheGeometry with conical base, long neck, cork, liquid inside
 - **Pouring animation**: flask moves in, tilts, pours droplets into cauldron, then triggers result effect
 - **Success effect**: green glow, golden/green sparkle particles, liquid shimmer
 - **Fail effect**: red flash, explosion particles, smoke puffs, cauldron shake
+
+### Score System
+
+- **In-game counter**: 🧪 emoji + count (top-left), pops on correct answer
+- **Total score**: persisted in `localStorage` key `potions-total-score`, displayed on title screen
+- Partial scores are saved when quitting mid-game via the back button
 
 ### Exercise Data Format
 
