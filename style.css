@@ -28,7 +28,7 @@
   --card-bg: rgba(60, 35, 15, 0.75);
   --card-border: #8b6b42;
   --font-body: "Poppins", sans-serif;
-  --font-title: "Playfair Display", serif;
+  --font-title: "Fredoka One", cursive;
 }
 
 html,
@@ -67,12 +67,14 @@ body {
 }
 
 #cauldron-2d.cauldron-success {
+  width: clamp(270px, 37vw, 480px);
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5))
           drop-shadow(0 0 25px rgba(68,255,136,0.8))
           drop-shadow(0 0 50px rgba(68,255,136,0.4));
 }
 
 #cauldron-2d.cauldron-fail {
+  width: clamp(340px, 46vw, 600px);
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5))
           drop-shadow(0 0 25px rgba(255,34,34,0.8))
           drop-shadow(0 0 50px rgba(255,34,34,0.4));
@@ -101,27 +103,19 @@ body {
 
 /* ===== 2D Characters (z-index 2) ===== */
 #wizard-2d {
-  position: fixed;
-  right: 18%;
-  bottom: 3%;
-  height: clamp(320px, 55vh, 550px);
-  width: auto;
-  z-index: 2;
-  pointer-events: none;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
-  animation: characterBreathe 4s ease-in-out infinite;
+  display: none;
 }
 
 #cat-2d {
   position: fixed;
-  left: 20%;
-  bottom: 3%;
-  height: clamp(200px, 35vh, 380px);
+  left: 1%;
+  bottom: 48%;
+  height: clamp(160px, 28vh, 300px);
   width: auto;
   z-index: 2;
   pointer-events: none;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
-  animation: characterBreathe 4s ease-in-out infinite 1s;
+  /* no animation — static */
 }
 
 @keyframes characterBreathe {
@@ -774,16 +768,10 @@ body {
     height: 28px;
   }
 
-  /* Scale down characters on mobile */
-  #wizard-2d {
-    height: clamp(180px, 35vh, 280px);
-    right: 10%;
-    bottom: 2%;
-  }
-
+  /* Scale down cat on mobile */
   #cat-2d {
-    height: clamp(120px, 22vh, 200px);
-    left: 12%;
-    bottom: 2%;
+    height: clamp(100px, 18vh, 160px);
+    left: 4%;
+    bottom: 40%;
   }
 }

@@ -289,6 +289,21 @@ const EXERCISES = [
       { choices: ["une", "un", "des", "le"], correct: "une" },
       { choices: ["potion", "potions", "poison", "potionnes"], correct: "potion" },
     ],
+    agreementGroups: [
+      { slots: [0, 1, 2], valid: [
+        ["La", "sorcière", "prépare"],
+        ["Le", "sorcier", "prépare"],
+        ["Les", "sorcières", "préparent"],
+        ["Les", "sorciers", "préparent"],
+        ["Un", "sorcier", "prépare"],
+      ]},
+      { slots: [3, 4], valid: [
+        ["une", "potion"],
+        ["un", "poison"],
+        ["des", "potions"],
+        ["le", "poison"],
+      ]},
+    ],
     successMsg: "La sorcière te félicite ! 🧙‍♀️✨",
     failMsg: "La potion tourne au vinaigre ! 💥",
   },
@@ -303,6 +318,18 @@ const EXERCISES = [
       { choices: ["des", "de", "les", "une"], correct: "des" },
       { choices: ["flammes", "flamme", "flammés", "flammées"], correct: "flammes" },
     ],
+    agreementGroups: [
+      { slots: [0, 1, 2], valid: [
+        ["Le", "dragon", "crache"],
+        ["Les", "dragons", "crachent"],
+        ["Des", "dragons", "crachent"],
+      ]},
+      { slots: [3, 4], valid: [
+        ["des", "flammes"],
+        ["les", "flammes"],
+        ["une", "flamme"],
+      ]},
+    ],
     successMsg: "Les dragons t'acclament ! 🐉🔥",
     failMsg: "Les dragons sont déçus ! 💥",
   },
@@ -316,6 +343,15 @@ const EXERCISES = [
       { choices: ["chat", "chatte", "chats", "chattes"], correct: "chat" },
       { choices: ["noir", "noire", "noirs", "noires"], correct: "noir" },
       { choices: ["dort", "dorment", "dors", "dormons"], correct: "dort" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2, 3, 4], valid: [
+        ["Le", "petit", "chat", "noir", "dort"],
+        ["La", "petite", "chatte", "noire", "dort"],
+        ["Les", "petits", "chats", "noirs", "dorment"],
+        ["Les", "petites", "chattes", "noires", "dorment"],
+        ["Un", "petit", "chat", "noir", "dort"],
+      ]},
     ],
     successMsg: "Le chat ronronne de bonheur ! 🐱💤",
     failMsg: "Le chat s'enfuit ! 💥",
@@ -332,6 +368,19 @@ const EXERCISES = [
       { choices: ["des", "de", "les", "une"], correct: "des" },
       { choices: ["potions", "potion", "potionnes", "potionnés"], correct: "potions" },
     ],
+    agreementGroups: [
+      { slots: [0, 1, 2, 3], valid: [
+        ["La", "grande", "sorcière", "prépare"],
+        ["Le", "grand", "sorcier", "prépare"],
+        ["Les", "grandes", "sorcières", "préparent"],
+        ["Les", "grands", "sorciers", "préparent"],
+      ]},
+      { slots: [4, 5], valid: [
+        ["des", "potions"],
+        ["les", "potions"],
+        ["une", "potion"],
+      ]},
+    ],
     successMsg: "Le cercle de sorcières applaudit ! 🧙‍♀️🧙‍♀️✨",
     failMsg: "Le cercle est rompu ! 💥",
   },
@@ -347,6 +396,21 @@ const EXERCISES = [
       { choices: ["préparé", "préparée", "préparés", "préparées"], correct: "préparé" },
       { choices: ["une", "un", "des", "le"], correct: "une" },
       { choices: ["potion", "potions", "poison", "potionnes"], correct: "potion" },
+    ],
+    agreementGroups: [
+      { slots: [0, 1, 2, 3, 4], valid: [
+        ["La", "belle", "sorcière", "a", "préparé"],
+        ["Le", "beau", "sorcier", "a", "préparé"],
+        ["Les", "belles", "sorcières", "ont", "préparé"],
+        ["Les", "beaux", "sorciers", "ont", "préparé"],
+        ["Un", "beau", "sorcier", "a", "préparé"],
+      ]},
+      { slots: [5, 6], valid: [
+        ["une", "potion"],
+        ["un", "poison"],
+        ["des", "potions"],
+        ["le", "poison"],
+      ]},
     ],
     successMsg: "Tu es un véritable Archimage ! 👑🎉",
     failMsg: "L'incantation suprême a échoué ! 💥",
@@ -1115,14 +1179,26 @@ function checkAllFilled() {
   btnValidate.disabled = !allFilled;
 }
 
+function isGroupValid(group, selections) {
+  const selected = group.slots.map((i) => selections[i]);
+  return group.valid.some((combo) =>
+    combo.every((val, j) => val === selected[j])
+  );
+}
+
 function validateAnswer() {
   const ex = exercises[currentExIndex];
-  let correct = true;
-  ex.slots.forEach((slot, i) => {
-    if (!slot.fixed && selections[i] !== slot.correct) {
-      correct = false;
-    }
-  });
+  let correct;
+  if (ex.agreementGroups) {
+    correct = ex.agreementGroups.every((g) => isGroupValid(g, selections));
+  } else {
+    correct = true;
+    ex.slots.forEach((slot, i) => {
+      if (!slot.fixed && selections[i] !== slot.correct) {
+        correct = false;
+      }
+    });
+  }
 
   if (correct) {
     score++;
@@ -1154,7 +1230,16 @@ function validateAnswer() {
     sentenceBuilder.querySelectorAll(".slot.choice").forEach((el) => {
       const idx = parseInt(el.dataset.slotIndex);
       const slot = ex.slots[idx];
-      if (selections[idx] === slot.correct) {
+      let slotOk;
+      if (correct) {
+        slotOk = true;
+      } else if (ex.agreementGroups) {
+        const group = ex.agreementGroups.find((g) => g.slots.includes(idx));
+        slotOk = group ? isGroupValid(group, selections) : selections[idx] === slot.correct;
+      } else {
+        slotOk = selections[idx] === slot.correct;
+      }
+      if (slotOk) {
         el.style.borderColor = "var(--accent-green)";
         el.style.background = "rgba(74, 222, 128, 0.2)";
         el.style.color = "var(--accent-green)";
