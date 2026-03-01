@@ -58,7 +58,7 @@ body {
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(280px, 38vw, 500px);
+  width: clamp(280px, 39vw, 500px);
   height: auto;
   z-index: 1;
   pointer-events: none;
@@ -732,6 +732,46 @@ body {
 .btn-menu:hover {
   border-color: var(--accent-gold);
   transform: translateY(-2px);
+}
+
+/* ===== Force Landscape on Mobile ===== */
+#rotate-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-dark);
+  justify-content: center;
+  align-items: center;
+}
+
+.rotate-content {
+  text-align: center;
+  color: var(--text-light);
+  font-family: var(--font-title);
+}
+
+.rotate-icon {
+  font-size: 4rem;
+  animation: rotatePhone 2s ease-in-out infinite;
+}
+
+.rotate-content p {
+  font-size: 1.4rem;
+  margin-top: 1rem;
+  color: var(--accent-gold);
+}
+
+@keyframes rotatePhone {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+
+@media (max-height: 500px) and (orientation: portrait),
+       (orientation: portrait) and (max-width: 900px) {
+  #rotate-overlay {
+    display: flex;
+  }
 }
 
 /* ===== Responsive ===== */
