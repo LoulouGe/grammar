@@ -1,6 +1,6 @@
 {
   "name": "L'Atelier de Potions Grammaticales",
-  "short_name": "Potions",
+  "short_name": "Grammar",
   "description": "Jeu éducatif de grammaire française",
   "start_url": "/grammar/",
   "display": "standalone",
@@ -9,12 +9,12 @@
   "theme_color": "#1e0f08",
   "icons": [
     {
-      "src": "assets/icon-192.png",
+      "src": "assets/96EFC32B-A386-4742-8163-445F95A57E66.jpeg",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/icon-512.png",
+      "src": "assets/96EFC32B-A386-4742-8163-445F95A57E66.jpeg",
       "sizes": "512x512",
       "type": "image/png"
     }
