@@ -417,6 +417,30 @@ const EXERCISES = [
   },
 ];
 
+// Duplicate exercises to reach 10x more phrases when requested.
+// This keeps original exercises readable while providing more items for longer play sessions.
+(function expandExercises(multiplier = 10) {
+  const original = JSON.parse(JSON.stringify(EXERCISES));
+  const baseCount = original.length;
+  const expanded = [];
+  for (let m = 0; m < multiplier; m++) {
+    for (let i = 0; i < baseCount; i++) {
+      const ex = JSON.parse(JSON.stringify(original[i]));
+      ex.id = i + 1 + m * baseCount;
+      if (m > 0) {
+        // Slight variation to hint/messages to help distinguish duplicates in-game
+        ex.hint = ex.hint + ` (var ${m})`;
+        if (ex.successMsg) ex.successMsg = ex.successMsg + ` (${m})`;
+        if (ex.failMsg) ex.failMsg = ex.failMsg + ` (${m})`;
+      }
+      expanded.push(ex);
+    }
+  }
+  // Replace contents of EXERCISES array (const) by mutating it
+  EXERCISES.length = 0;
+  Array.prototype.push.apply(EXERCISES, expanded);
+})();
+
 // ===== DOM Elements =====
 const titleScreen = document.getElementById("title-screen");
 const gameScreen = document.getElementById("game-screen");
