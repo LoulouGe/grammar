@@ -1248,7 +1248,7 @@ function updateScoreDisplay() {
 function startGame(level) {
   currentLevel = level;
   const levelExercises = shuffleArray(EXERCISES.filter((e) => e.level === level));
-  if (currentMode === "survival") {
+  if (currentMode === "survival" || currentMode === "classic") {
     exercises = levelExercises.slice(0, 10);
   } else {
     exercises = levelExercises;
