@@ -24,6 +24,7 @@
 
     <!-- 2D Cauldron image -->
     <img id="cauldron-2d" src="assets/cauldron.png" alt="Chaudron" />
+    <div id="cauldron-aura" aria-hidden="true"></div>
 
     <!-- Three.js canvas (transparent — only effects + pouring animation) -->
     <canvas id="scene"></canvas>
@@ -62,6 +63,27 @@
             <span class="level-desc">Construis toute la phrase !</span>
           </button>
         </div>
+        <div class="mode-panel">
+          <h2 class="mode-title">Choisis un mode de jeu</h2>
+          <div class="mode-select">
+            <button class="btn-mode active" data-mode="classic">
+              <span class="mode-name">Classique</span>
+              <span class="mode-desc">Le mode actuel, tranquille</span>
+            </button>
+            <button class="btn-mode" data-mode="combo">
+              <span class="mode-name">Combo</span>
+              <span class="mode-desc">Les bonnes series rapportent plus</span>
+            </button>
+            <button class="btn-mode" data-mode="chrono">
+              <span class="mode-name">Chrono</span>
+              <span class="mode-desc">90 secondes pour marquer un max</span>
+            </button>
+            <button class="btn-mode" data-mode="survival">
+              <span class="mode-name">Survie</span>
+              <span class="mode-desc">10 potions avec 2 erreurs max</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -71,6 +93,7 @@
         <!-- Top bar: score + back button -->
         <div class="game-top-bar">
           <div id="game-score" class="game-score">🧪 <span id="game-score-count">0</span></div>
+          <div id="game-mode-status" class="game-mode-status hidden"></div>
           <button id="btn-back" class="btn-back" title="Menu principal">✕</button>
         </div>
 
@@ -109,6 +132,7 @@
         <div id="results-stars" class="results-stars"></div>
         <p id="results-score" class="results-score"></p>
         <p id="results-message" class="results-message"></p>
+        <p id="results-mode-summary" class="results-mode-summary"></p>
         <button id="btn-replay" class="btn-replay">Rejouer</button>
         <button id="btn-menu" class="btn-menu">Menu principal</button>
       </div>

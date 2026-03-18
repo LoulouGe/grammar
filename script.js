@@ -460,6 +460,9 @@ const totalScoreCount = document.getElementById("total-score-count");
 const gameScoreEl = document.getElementById("game-score");
 const gameScoreCount = document.getElementById("game-score-count");
 const btnBack = document.getElementById("btn-back");
+const gameModeStatus = document.getElementById("game-mode-status");
+const resultsModeSummary = document.getElementById("results-mode-summary");
+const cauldronAura = document.getElementById("cauldron-aura");
 
 // ===== Persistent Score (localStorage) =====
 function getTotalScore() {
@@ -478,11 +481,41 @@ function refreshTotalScore() {
 
 // ===== Game State =====
 let currentLevel = "apprenti";
+let currentMode = "classic";
 let exercises = [];
 let currentExIndex = 0;
 let score = 0;
 let selections = {}; // slotIndex -> chosen word
 let activeSlotIndex = null; // which choice slot is being filled
+let streak = 0;
+let bestStreak = 0;
+let lives = 2;
+let chronoLeft = 90;
+let chronoInterval = null;
+let gameEnded = false;
+let advanceTimeout = null;
+let wrongAnswers = 0;
+let successfulAnswers = 0;
+let roundTarget = 0;
+
+const MODE_CONFIG = {
+  classic: {
+    label: "Classique",
+    description: "Partie normale",
+  },
+  combo: {
+    label: "Combo",
+    description: "Les series augmentent les points",
+  },
+  chrono: {
+    label: "Chrono",
+    description: "90 secondes",
+  },
+  survival: {
+    label: "Survie",
+    description: "10 potions, 2 erreurs max",
+  },
+};
 
 // ===== Three.js Scene =====
 let scene, camera, renderer;
@@ -786,74 +819,112 @@ function spawnDroplet(vial, isCorrect) {
   effectParticles.push(drop);
 }
 
-// ===== 3D Effects =====
-function successEffect() {
-  // Green glow
-  const glow = new THREE.PointLight(0x44ff88, 2, 10);
-  glow.position.set(0, 1.5, 0);
-  scene.add(glow);
-
-  // Pulse the glow
-  let start = performance.now();
-  function pulseGlow() {
-    const elapsed = (performance.now() - start) / 1000;
-    if (elapsed > 2) {
-      scene.remove(glow);
-      return;
-    }
-    glow.intensity = 2.5 * Math.sin(elapsed * Math.PI / 1) * (1 - elapsed / 2);
-    requestAnimationFrame(pulseGlow);
-  }
-  pulseGlow();
-
-  // Swap cauldron image to sparkle version
+function playCauldronAura(type) {
   const cauldronEl = document.getElementById("cauldron-2d");
-  if (cauldronEl) {
-    cauldronEl.src = "assets/cauldron-sparkle.png";
-    cauldronEl.classList.add("cauldron-success");
+  if (cauldronAura) {
+    cauldronAura.classList.remove("aura-success", "aura-fail");
+    void cauldronAura.offsetWidth;
+    cauldronAura.classList.add(type === "success" ? "aura-success" : "aura-fail");
     setTimeout(() => {
-      cauldronEl.classList.remove("cauldron-success");
-      cauldronEl.src = "assets/cauldron.png";
-    }, 2500);
+      cauldronAura.classList.remove("aura-success", "aura-fail");
+    }, type === "success" ? 2200 : 1400);
   }
 
-  // Golden sparkle particles — burst upward from cauldron
-  for (let i = 0; i < 40; i++) {
-    const geo = new THREE.SphereGeometry(0.03 + Math.random() * 0.03, 6, 6);
-    const colors = [0xffdd44, 0x44ff88, 0xaaffdd, 0xffffff];
+  if (cauldronEl) {
+    cauldronEl.classList.remove("cauldron-success", "cauldron-fail");
+    void cauldronEl.offsetWidth;
+    cauldronEl.classList.add(type === "success" ? "cauldron-success" : "cauldron-fail");
+    setTimeout(() => {
+      cauldronEl.classList.remove("cauldron-success", "cauldron-fail");
+    }, 1800);
+  }
+}
+
+function spawnSuccessSparks() {
+  for (let i = 0; i < 72; i++) {
+    const geo = new THREE.SphereGeometry(0.012 + Math.random() * 0.02, 4, 4);
+    const colors = [0xfff1a8, 0xffd84a, 0xffffff, 0x9bffe2];
     const mat = new THREE.MeshStandardMaterial({
       color: colors[Math.floor(Math.random() * colors.length)],
-      emissive: 0xffaa00,
-      emissiveIntensity: 1,
+      emissive: 0xffc93a,
+      emissiveIntensity: 1.3,
       transparent: true,
-      opacity: 1,
+      opacity: 0.95,
     });
     const p = new THREE.Mesh(geo, mat);
     p.position.set(
-      (Math.random() - 0.5) * 0.8,
-      0.7 + Math.random() * 0.3,
-      (Math.random() - 0.5) * 0.8
+      (Math.random() - 0.5) * 0.55,
+      0.82 + Math.random() * 0.18,
+      (Math.random() - 0.5) * 0.55
     );
     const angle = Math.random() * Math.PI * 2;
-    const upForce = 2 + Math.random() * 3;
-    const outForce = 0.3 + Math.random() * 1;
+    const speed = 0.6 + Math.random() * 2.1;
     p.userData.velocity = new THREE.Vector3(
-      Math.cos(angle) * outForce,
-      upForce,
-      Math.sin(angle) * outForce
+      Math.cos(angle) * speed,
+      2.2 + Math.random() * 3.8,
+      Math.sin(angle) * speed
     );
-    p.userData.life = 1.2 + Math.random() * 0.8;
+    p.userData.life = 0.8 + Math.random() * 0.65;
     p.userData.maxLife = p.userData.life;
     scene.add(p);
     effectParticles.push(p);
   }
+}
 
-  // Continuous shimmer particles (smaller, slower, lingering)
+function spawnSmokeCloud() {
+  for (let i = 0; i < 28; i++) {
+    const geo = new THREE.SphereGeometry(0.05 + Math.random() * 0.09, 5, 5);
+    const colors = [0x3d3a3a, 0x525050, 0x6c6868, 0x2f2c2c];
+    const mat = new THREE.MeshStandardMaterial({
+      color: colors[Math.floor(Math.random() * colors.length)],
+      emissive: 0x191616,
+      emissiveIntensity: 0.2,
+      transparent: true,
+      opacity: 0.72,
+    });
+    const p = new THREE.Mesh(geo, mat);
+    const angle = Math.random() * Math.PI * 2;
+    const radius = Math.random() * 0.3;
+    p.position.set(Math.cos(angle) * radius, 0.78 + Math.random() * 0.18, Math.sin(angle) * radius);
+    p.userData.velocity = new THREE.Vector3(
+      (Math.random() - 0.5) * 0.35,
+      0.5 + Math.random() * 1.1,
+      (Math.random() - 0.5) * 0.35
+    );
+    p.userData.life = 1.3 + Math.random() * 1;
+    p.userData.maxLife = p.userData.life;
+    scene.add(p);
+    effectParticles.push(p);
+  }
+}
+
+// ===== 3D Effects =====
+function successEffect() {
+  playCauldronAura("success");
+
+  const glow = new THREE.PointLight(0xffdf70, 2.4, 12);
+  glow.position.set(0, 1.8, 0);
+  scene.add(glow);
+
+  let start = performance.now();
+  function pulseGlow() {
+    const elapsed = (performance.now() - start) / 1000;
+    if (elapsed > 1.8) {
+      scene.remove(glow);
+      return;
+    }
+    glow.intensity = (1.4 + Math.sin(elapsed * Math.PI * 2) * 1.2) * (1 - elapsed / 1.8);
+    requestAnimationFrame(pulseGlow);
+  }
+  pulseGlow();
+
+  spawnSuccessSparks();
+
   for (let i = 0; i < 20; i++) {
     const geo = new THREE.SphereGeometry(0.015, 4, 4);
     const mat = new THREE.MeshStandardMaterial({
-      color: 0xaaffcc,
-      emissive: 0x44ff88,
+      color: 0xfef3a0,
+      emissive: 0x7bffd7,
       emissiveIntensity: 1.5,
       transparent: true,
       opacity: 0.8,
@@ -877,67 +948,57 @@ function successEffect() {
 }
 
 function failEffect() {
-  // Big red flash
-  const flash = new THREE.PointLight(0xff2222, 4, 15);
-  flash.position.set(0, 2, 0);
+  playCauldronAura("fail");
+
+  const flash = new THREE.PointLight(0xff8d66, 1.8, 8);
+  flash.position.set(0, 1.7, 0);
   scene.add(flash);
 
   let start = performance.now();
   function pulseFlash() {
     const elapsed = (performance.now() - start) / 1000;
-    if (elapsed > 1.2) {
+    if (elapsed > 1) {
       scene.remove(flash);
       return;
     }
-    flash.intensity = 4 * (1 - elapsed / 1.2);
+    flash.intensity = (2.5 - elapsed * 1.5) * (1 - elapsed / 1);
     requestAnimationFrame(pulseFlash);
   }
   pulseFlash();
 
-  // Swap cauldron image to explosion version
-  const cauldronEl = document.getElementById("cauldron-2d");
-  if (cauldronEl) {
-    cauldronEl.src = "assets/cauldron-explode.png";
-    cauldronEl.classList.add("cauldron-fail");
-    setTimeout(() => {
-      cauldronEl.classList.remove("cauldron-fail");
-      cauldronEl.src = "assets/cauldron.png";
-    }, 2500);
-  }
+  spawnSmokeCloud();
 
-  // Explosion particles — big burst outward
-  for (let i = 0; i < 35; i++) {
-    const size = 0.06 + Math.random() * 0.1;
+  for (let i = 0; i < 14; i++) {
+    const size = 0.025 + Math.random() * 0.045;
     const geo = new THREE.SphereGeometry(size, 6, 6);
-    const colors = [0xff4444, 0xff8800, 0xffcc00, 0x884422, 0x555555];
+    const colors = [0x6f6a6a, 0x4f4a4a, 0x938b8b];
     const mat = new THREE.MeshStandardMaterial({
       color: colors[Math.floor(Math.random() * colors.length)],
-      emissive: 0x882200,
-      emissiveIntensity: 0.8,
+      emissive: 0x2a2626,
+      emissiveIntensity: 0.25,
       transparent: true,
-      opacity: 0.95,
+      opacity: 0.8,
     });
     const p = new THREE.Mesh(geo, mat);
     p.position.set(
-      (Math.random() - 0.5) * 0.5,
-      0.7 + Math.random() * 0.3,
-      (Math.random() - 0.5) * 0.5
+      (Math.random() - 0.5) * 0.35,
+      0.86 + Math.random() * 0.12,
+      (Math.random() - 0.5) * 0.35
     );
     const angle = Math.random() * Math.PI * 2;
-    const force = 2 + Math.random() * 3;
+    const force = 0.25 + Math.random() * 0.45;
     p.userData.velocity = new THREE.Vector3(
       Math.cos(angle) * force,
-      2 + Math.random() * 3,
+      0.65 + Math.random() * 0.6,
       Math.sin(angle) * force
     );
-    p.userData.life = 0.8 + Math.random() * 0.6;
+    p.userData.life = 1.1 + Math.random() * 0.7;
     p.userData.maxLife = p.userData.life;
     scene.add(p);
     effectParticles.push(p);
   }
 
-  // Smoke puffs — larger, slower, darker
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 18; i++) {
     const size = 0.1 + Math.random() * 0.15;
     const geo = new THREE.SphereGeometry(size, 6, 6);
     const mat = new THREE.MeshStandardMaterial({
@@ -949,22 +1010,21 @@ function failEffect() {
     });
     const p = new THREE.Mesh(geo, mat);
     p.position.set(
-      (Math.random() - 0.5) * 0.6,
+      (Math.random() - 0.5) * 0.55,
       0.9,
-      (Math.random() - 0.5) * 0.6
+      (Math.random() - 0.5) * 0.55
     );
     p.userData.velocity = new THREE.Vector3(
-      (Math.random() - 0.5) * 0.8,
-      1 + Math.random() * 1.5,
-      (Math.random() - 0.5) * 0.8
+      (Math.random() - 0.5) * 0.35,
+      0.9 + Math.random() * 1.2,
+      (Math.random() - 0.5) * 0.35
     );
-    p.userData.life = 1.5 + Math.random() * 1;
+    p.userData.life = 1.8 + Math.random() * 1.2;
     p.userData.maxLife = p.userData.life;
     scene.add(p);
     effectParticles.push(p);
   }
 
-  // Shake the 2D cauldron
   const cauldronShake = document.getElementById("cauldron-2d");
   if (cauldronShake) {
     cauldronShake.classList.add("cauldron-shake");
@@ -1009,13 +1069,146 @@ function showScreen(screen) {
   screen.classList.add("active");
 }
 
+function clearGameTimers() {
+  if (chronoInterval) {
+    clearInterval(chronoInterval);
+    chronoInterval = null;
+  }
+  if (advanceTimeout) {
+    clearTimeout(advanceTimeout);
+    advanceTimeout = null;
+  }
+}
+
+function updateModeStatus() {
+  if (!gameModeStatus) return;
+
+  let text = MODE_CONFIG[currentMode].label;
+
+  if (currentMode === "combo") {
+    text = `Combo x${Math.max(1, Math.min(4, 1 + Math.floor(streak / 2)))} · Serie ${streak}`;
+  } else if (currentMode === "chrono") {
+    text = `Temps restant : ${chronoLeft}s`;
+  } else if (currentMode === "survival") {
+    text = `Survie · ${successfulAnswers}/${roundTarget} · ${"❤️".repeat(lives)}${"🖤".repeat(Math.max(0, 2 - lives))}`;
+  } else {
+    text = MODE_CONFIG[currentMode].label;
+  }
+
+  gameModeStatus.textContent = text;
+  gameModeStatus.classList.remove("hidden");
+}
+
+function updateModeButtons() {
+  document.querySelectorAll(".btn-mode").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.mode === currentMode);
+  });
+}
+
+function selectMode(mode) {
+  currentMode = MODE_CONFIG[mode] ? mode : "classic";
+  updateModeButtons();
+}
+
+function setupModeState() {
+  streak = 0;
+  bestStreak = 0;
+  lives = 2;
+  chronoLeft = 90;
+  wrongAnswers = 0;
+  successfulAnswers = 0;
+  gameEnded = false;
+  clearGameTimers();
+  roundTarget = currentMode === "survival" ? 10 : exercises.length;
+  updateModeStatus();
+
+  if (currentMode === "chrono") {
+    chronoInterval = setInterval(() => {
+      if (gameEnded) return;
+      chronoLeft = Math.max(0, chronoLeft - 1);
+      updateModeStatus();
+      if (chronoLeft === 0) {
+        endGame();
+      }
+    }, 1000);
+  }
+}
+
+function endGame() {
+  if (gameEnded) return;
+  gameEnded = true;
+  clearGameTimers();
+  showResults();
+}
+
+function getModePoints() {
+  if (currentMode === "combo") {
+    return Math.max(1, Math.min(4, 1 + Math.floor(streak / 2)));
+  }
+  return 1;
+}
+
+function getNextExerciseIndex() {
+  if (currentMode === "chrono" || currentMode === "combo") {
+    return (currentExIndex + 1) % exercises.length;
+  }
+  return currentExIndex + 1;
+}
+
+function getResultsTitle() {
+  if (currentMode === "chrono") return "Le sablier s'est vide !";
+  if (currentMode === "survival") return lives > 0 && successfulAnswers >= roundTarget ? "Survie reussie !" : "La survie s'arrete ici !";
+  if (currentMode === "combo") return "La serie est terminee !";
+  return "Bravo, jeune alchimiste !";
+}
+
+function getModeSummary(total) {
+  if (currentMode === "combo") {
+    return `Partie terminee a la premiere erreur. Meilleure serie : ${bestStreak}.`;
+  }
+  if (currentMode === "chrono") {
+    return `Tu as reussi ${successfulAnswers} bonne${successfulAnswers > 1 ? "s" : ""} reponse${successfulAnswers > 1 ? "s" : ""} en 90 secondes.`;
+  }
+  if (currentMode === "survival") {
+    return `Objectif : ${roundTarget} potions. Erreurs : ${wrongAnswers}/2.`;
+  }
+  return `${score} / ${total} potions reussies dans ce niveau.`;
+}
+
+function getResultsRatio(total) {
+  if (currentMode === "combo") {
+    return Math.min(1, score / 12);
+  }
+  if (currentMode === "chrono") {
+    return Math.min(1, successfulAnswers / 14);
+  }
+  if (currentMode === "survival") {
+    return successfulAnswers / Math.max(1, roundTarget);
+  }
+  return total > 0 ? score / total : 0;
+}
+
+function updateScoreDisplay() {
+  const prefix = currentMode === "combo" ? "🔥" : "🧪";
+  if (gameScoreEl.firstChild) {
+    gameScoreEl.firstChild.textContent = `${prefix} `;
+  }
+  gameScoreCount.textContent = score;
+}
+
 // ===== Game Logic =====
 function startGame(level) {
   currentLevel = level;
-  exercises = EXERCISES.filter((e) => e.level === level);
+  const levelExercises = shuffleArray(EXERCISES.filter((e) => e.level === level));
+  if (currentMode === "survival") {
+    exercises = levelExercises.slice(0, 10);
+  } else {
+    exercises = levelExercises;
+  }
   currentExIndex = 0;
   score = 0;
-  gameScoreCount.textContent = "0";
+  setupModeState();
+  updateScoreDisplay();
   showScreen(gameScreen);
   buildProgressBar();
   loadExercise();
@@ -1023,16 +1216,47 @@ function startGame(level) {
 
 function buildProgressBar() {
   progressBar.innerHTML = "";
-  for (let i = 0; i < exercises.length; i++) {
+  progressBar.classList.remove("hidden");
+
+  if (currentMode === "combo") {
+    progressBar.classList.add("hidden");
+    return;
+  }
+
+  const totalSlots = currentMode === "chrono" ? 0 : exercises.length;
+  for (let i = 0; i < totalSlots; i++) {
     const vial = document.createElement("div");
     vial.className = "progress-vial";
-    if (i === 0) vial.classList.add("current");
+    if (currentMode === "classic" && i === 0) vial.classList.add("current");
     progressBar.appendChild(vial);
   }
 }
 
 function updateProgress(index, success) {
+  if (currentMode === "chrono") {
+    if (success && successfulAnswers <= 10) {
+      const vial = document.createElement("div");
+      vial.className = "progress-vial filled earned";
+      progressBar.appendChild(vial);
+    }
+    return;
+  }
+
   const vials = progressBar.querySelectorAll(".progress-vial");
+  if (!vials.length) return;
+
+  if (currentMode === "survival") {
+    vials.forEach((v) => v.classList.remove("current", "earned"));
+    if (success && index < vials.length) {
+      vials[index].classList.add("filled", "earned");
+    }
+    const nextIndex = Math.min(successfulAnswers, vials.length - 1);
+    if (successfulAnswers < vials.length) {
+      vials[nextIndex].classList.add("current");
+    }
+    return;
+  }
+
   vials.forEach((v) => v.classList.remove("current"));
   if (index < vials.length) {
     vials[index].classList.add(success ? "filled" : "failed");
@@ -1043,9 +1267,15 @@ function updateProgress(index, success) {
 }
 
 function loadExercise() {
+  if (gameEnded) return;
   const ex = exercises[currentExIndex];
+  if (!ex) {
+    endGame();
+    return;
+  }
   selections = {};
   activeSlotIndex = null;
+  updateModeStatus();
 
   // Hint
   hintEl.textContent = ex.hint;
@@ -1211,6 +1441,7 @@ function isGroupValid(group, selections) {
 }
 
 function validateAnswer() {
+  if (gameEnded) return;
   const ex = exercises[currentExIndex];
   let correct;
   if (ex.agreementGroups) {
@@ -1225,13 +1456,25 @@ function validateAnswer() {
   }
 
   if (correct) {
-    score++;
-    gameScoreCount.textContent = score;
+    streak++;
+    bestStreak = Math.max(bestStreak, streak);
+    const points = getModePoints();
+    score += points;
+    successfulAnswers++;
+    updateScoreDisplay();
     // Pop animation
     gameScoreEl.classList.remove("pop");
     void gameScoreEl.offsetWidth; // force reflow
     gameScoreEl.classList.add("pop");
+  } else {
+    wrongAnswers++;
+    streak = 0;
+    if (currentMode === "survival") {
+      lives = Math.max(0, lives - 1);
+    }
   }
+
+  updateModeStatus();
 
   // Disable further interaction immediately
   btnValidate.disabled = true;
@@ -1241,11 +1484,22 @@ function validateAnswer() {
 
   // Start pouring animation — effects + feedback trigger after pour finishes
   pourVialAnimation(correct, () => {
+    if (gameEnded) return;
     // Show feedback message after the pour + effect
     if (correct) {
-      showFeedback(ex.successMsg, "success");
+      let successText = ex.successMsg;
+      if (currentMode === "combo") {
+        successText += ` +${getModePoints()} points`;
+      }
+      showFeedback(successText, "success");
     } else {
-      showFeedback(ex.failMsg, "error");
+      let failText = ex.failMsg;
+      if (currentMode === "survival") {
+        failText += ` Il reste ${lives} vie${lives > 1 ? "s" : ""}.`;
+      } else if (currentMode === "combo") {
+        failText += " Fin du combo.";
+      }
+      showFeedback(failText, "error");
     }
 
     updateProgress(currentExIndex, correct);
@@ -1277,12 +1531,30 @@ function validateAnswer() {
     });
 
     // Next exercise after delay (wait for effects to play out)
-    setTimeout(() => {
-      currentExIndex++;
-      if (currentExIndex < exercises.length) {
+    advanceTimeout = setTimeout(() => {
+      advanceTimeout = null;
+      if (gameEnded) return;
+      if (currentMode === "combo" && !correct) {
+        endGame();
+        return;
+      }
+      if (currentMode === "survival" && lives === 0) {
+        endGame();
+        return;
+      }
+      if (currentMode === "survival" && successfulAnswers >= roundTarget) {
+        endGame();
+        return;
+      }
+      if (currentMode === "chrono" && chronoLeft === 0) {
+        endGame();
+        return;
+      }
+      currentExIndex = getNextExerciseIndex();
+      if (currentMode === "chrono" || currentMode === "combo" || currentExIndex < exercises.length) {
         loadExercise();
       } else {
-        showResults();
+        endGame();
       }
     }, 2500);
   });
@@ -1302,7 +1574,11 @@ function showResults() {
 
   showScreen(resultsScreen);
   const total = exercises.length;
-  const ratio = score / total;
+  const ratio = getResultsRatio(total);
+  const resultsTitle = document.querySelector(".results-title");
+  if (resultsTitle) {
+    resultsTitle.textContent = getResultsTitle();
+  }
 
   // Stars
   resultsStars.innerHTML = "";
@@ -1321,9 +1597,27 @@ function showResults() {
     resultsStars.appendChild(star);
   }
 
-  resultsScore.textContent = `${score} / ${total} potions réussies`;
+  if (currentMode === "combo") {
+    resultsScore.textContent = `${score} points de combo`;
+  } else if (currentMode === "chrono") {
+    resultsScore.textContent = `${score} points en 90 secondes`;
+  } else if (currentMode === "survival") {
+    resultsScore.textContent = `${successfulAnswers} / ${roundTarget} potions reussies`;
+  } else {
+    resultsScore.textContent = `${score} / ${total} potions réussies`;
+  }
 
-  if (ratio >= 0.9) {
+  resultsModeSummary.textContent = getModeSummary(total);
+
+  if (currentMode === "survival" && lives === 0) {
+    resultsMessage.textContent = "Tu as tenu jusqu'a la derniere etincelle.";
+  } else if (currentMode === "survival" && successfulAnswers >= roundTarget) {
+    resultsMessage.textContent = "Tu as reussi les 10 potions sans craquer.";
+  } else if (currentMode === "chrono" && score >= 12) {
+    resultsMessage.textContent = "Tu as garde un rythme incroyable du debut a la fin.";
+  } else if (currentMode === "combo") {
+    resultsMessage.textContent = "Une erreur et la serie s'arrete. Reessaie pour battre ton record.";
+  } else if (ratio >= 0.9) {
     resultsMessage.textContent =
       "Tu es un véritable maître alchimiste ! Extraordinaire !";
   } else if (ratio >= 0.6) {
@@ -1336,6 +1630,8 @@ function showResults() {
     resultsMessage.textContent =
       "Ne te décourage pas ! Chaque alchimiste a commencé par apprendre !";
   }
+
+  refreshTotalScore();
 }
 
 // ===== Utilities =====
@@ -1364,18 +1660,27 @@ document.querySelectorAll(".btn-level").forEach((btn) => {
   });
 });
 
+document.querySelectorAll(".btn-mode").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    selectMode(btn.dataset.mode);
+  });
+});
+
 btnValidate.addEventListener("click", validateAnswer);
 
 btnReplay.addEventListener("click", () => {
+  clearGameTimers();
   startGame(currentLevel);
 });
 
 btnMenu.addEventListener("click", () => {
+  clearGameTimers();
   refreshTotalScore();
   showScreen(titleScreen);
 });
 
 btnBack.addEventListener("click", () => {
+  clearGameTimers();
   // Save partial score before quitting
   if (score > 0) addToTotalScore(score);
   refreshTotalScore();
@@ -1383,5 +1688,6 @@ btnBack.addEventListener("click", () => {
 });
 
 // ===== Init =====
+selectMode(currentMode);
 refreshTotalScore();
 initThree();

@@ -58,7 +58,7 @@ body {
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(280px, 39vw, 500px);
+  width: clamp(360px, 48vw, 660px);
   height: auto;
   z-index: 1;
   pointer-events: none;
@@ -67,17 +67,15 @@ body {
 }
 
 #cauldron-2d.cauldron-success {
-  width: clamp(270px, 37vw, 480px);
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5))
-          drop-shadow(0 0 25px rgba(68,255,136,0.8))
-          drop-shadow(0 0 50px rgba(68,255,136,0.4));
+          drop-shadow(0 0 18px rgba(255, 214, 84, 0.55))
+          drop-shadow(0 -10px 28px rgba(119, 255, 206, 0.25));
 }
 
 #cauldron-2d.cauldron-fail {
-  width: clamp(340px, 46vw, 600px);
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5))
-          drop-shadow(0 0 25px rgba(255,34,34,0.8))
-          drop-shadow(0 0 50px rgba(255,34,34,0.4));
+          drop-shadow(0 0 18px rgba(255, 132, 72, 0.35))
+          drop-shadow(0 0 32px rgba(58, 14, 14, 0.45));
 }
 
 #cauldron-2d.cauldron-shake {
@@ -88,6 +86,112 @@ body {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   25% { transform: translateX(calc(-50% + 4px)) translateY(-2px); }
   75% { transform: translateX(calc(-50% - 4px)) translateY(1px); }
+}
+
+#cauldron-aura {
+  position: fixed;
+  left: 50%;
+  bottom: 12%;
+  width: clamp(220px, 28vw, 360px);
+  height: clamp(120px, 15vw, 180px);
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+#cauldron-aura::before,
+#cauldron-aura::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+#cauldron-aura.aura-success {
+  opacity: 1;
+}
+
+#cauldron-aura.aura-success::before {
+  opacity: 1;
+  background:
+    radial-gradient(circle at center, rgba(255, 249, 189, 0.55) 0 10%, transparent 11%),
+    radial-gradient(circle at 20% 40%, rgba(255, 216, 89, 0.95) 0 2%, transparent 3%),
+    radial-gradient(circle at 70% 28%, rgba(255, 244, 194, 0.9) 0 2%, transparent 3%),
+    radial-gradient(circle at 35% 76%, rgba(126, 255, 218, 0.9) 0 2%, transparent 3%),
+    radial-gradient(circle at 82% 72%, rgba(255, 216, 89, 0.95) 0 2%, transparent 3%);
+  filter: blur(0.6px);
+  animation: auraSparkle 0.75s ease-out 3;
+}
+
+#cauldron-aura.aura-success::after {
+  inset: 12% 18%;
+  opacity: 1;
+  border: 0;
+  background:
+    radial-gradient(circle at center, transparent 0 52%, rgba(255, 218, 90, 0.9) 53% 54%, transparent 55%),
+    radial-gradient(circle at center, transparent 0 64%, rgba(126, 255, 218, 0.6) 65% 66%, transparent 67%);
+  animation: auraPulse 0.9s ease-out 2;
+}
+
+#cauldron-aura.aura-fail {
+  opacity: 1;
+}
+
+#cauldron-aura.aura-fail::before {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 50% 60%, rgba(58, 56, 56, 0.58) 0 16%, transparent 17%),
+    radial-gradient(circle at 30% 44%, rgba(88, 84, 84, 0.44) 0 12%, transparent 13%),
+    radial-gradient(circle at 68% 42%, rgba(66, 63, 63, 0.48) 0 14%, transparent 15%),
+    radial-gradient(circle at 48% 24%, rgba(122, 116, 116, 0.26) 0 10%, transparent 11%);
+  filter: blur(6px);
+  animation: smokeRise 1.3s ease-out 1;
+}
+
+#cauldron-aura.aura-fail::after {
+  inset: 4% 8%;
+  opacity: 1;
+  background:
+    radial-gradient(circle at 40% 70%, rgba(38, 35, 35, 0.52) 0 12%, transparent 13%),
+    radial-gradient(circle at 60% 52%, rgba(54, 52, 52, 0.42) 0 16%, transparent 17%),
+    radial-gradient(circle at 52% 28%, rgba(95, 91, 91, 0.32) 0 14%, transparent 15%);
+  filter: blur(10px);
+  animation: smokeDrift 1.5s ease-out 1;
+}
+
+@keyframes auraPulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+@keyframes auraSparkle {
+  0% { transform: scale(0.9); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+
+@keyframes smokeRise {
+  0% { transform: translateY(18px) scale(0.75); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateY(-34px) scale(1.1); opacity: 0; }
+}
+
+@keyframes smokeDrift {
+  0% { transform: translateY(10px) scale(0.85); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate(8px, -28px) scale(1.14); opacity: 0; }
 }
 
 /* ===== Three.js Canvas (z-index 1) ===== */
@@ -246,6 +350,7 @@ body {
   gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
 
 .btn-level {
@@ -290,6 +395,64 @@ body {
   color: var(--text-muted);
 }
 
+.mode-panel {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mode-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  color: var(--accent-gold);
+  margin-bottom: 1rem;
+}
+
+.mode-select {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  min-width: 150px;
+  background: linear-gradient(135deg, rgba(92,74,58,0.88), rgba(58,40,32,0.88));
+  border: 2px solid var(--card-border);
+  border-radius: 14px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: var(--font-body);
+  backdrop-filter: blur(4px);
+}
+
+.btn-mode:hover,
+.btn-mode.active {
+  border-color: var(--accent-green);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(91, 219, 126, 0.22);
+}
+
+.btn-mode.active {
+  background: linear-gradient(135deg, rgba(55,98,65,0.95), rgba(42,74,49,0.92));
+}
+
+.mode-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+.mode-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
 /* ===== Game Screen ===== */
 .game-overlay {
   position: relative;
@@ -313,6 +476,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
   z-index: 5;
 }
 
@@ -358,6 +522,22 @@ body {
   animation: scorePop 0.4s ease;
 }
 
+.game-mode-status {
+  font-size: clamp(0.85rem, 2.2vw, 1rem);
+  font-weight: 700;
+  color: var(--text-light);
+  background: rgba(60, 35, 15, 0.82);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 2px solid var(--card-border);
+  backdrop-filter: blur(4px);
+  text-align: center;
+}
+
+.game-mode-status.hidden {
+  display: none;
+}
+
 @keyframes scorePop {
   0% { transform: scale(1); }
   50% { transform: scale(1.4); color: var(--accent-green); }
@@ -370,6 +550,12 @@ body {
   gap: 0.5rem;
   justify-content: center;
   padding: 0.5rem;
+  min-height: 48px;
+  flex-wrap: wrap;
+}
+
+.progress-bar.hidden {
+  display: none;
 }
 
 .progress-vial {
@@ -408,6 +594,11 @@ body {
 .progress-vial.current {
   border-color: var(--accent-gold);
   animation: vialPulse 1.5s ease-in-out infinite;
+}
+
+.progress-vial.earned {
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 0 18px rgba(255, 200, 69, 0.45);
 }
 
 @keyframes vialPulse {
@@ -698,6 +889,13 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.results-mode-summary {
+  font-size: 0.95rem;
+  color: var(--accent-gold);
+  margin-bottom: 1rem;
+  min-height: 1.25rem;
+}
+
 .btn-replay,
 .btn-menu {
   padding: 0.75rem 2rem;
@@ -779,7 +977,17 @@ body {
     align-items: center;
   }
 
+  .mode-select {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .btn-level {
+    width: 80%;
+    min-width: unset;
+  }
+
+  .btn-mode {
     width: 80%;
     min-width: unset;
   }
@@ -800,6 +1008,11 @@ body {
   .game-overlay {
     padding: 0.75rem 0.5rem 2rem;
     gap: 1rem;
+  }
+
+  .game-top-bar {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .word-cards {
