@@ -522,6 +522,21 @@ let effectParticles = [];
 let clock;
 let animationId;
 
+function isCompactMobile() {
+  return window.innerWidth <= 600;
+}
+
+function updateCameraLayout() {
+  if (!camera) return;
+
+  if (isCompactMobile()) {
+    camera.position.set(0, 2.35, 7.4);
+  } else {
+    camera.position.set(0, 2, 6);
+  }
+  camera.lookAt(0, 0.5, 0);
+}
+
 function initThree() {
   const canvas = document.getElementById("scene");
   clock = new THREE.Clock();
@@ -535,8 +550,7 @@ function initThree() {
     0.1,
     100
   );
-  camera.position.set(0, 2, 6);
-  camera.lookAt(0, 0.5, 0);
+  updateCameraLayout();
 
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
@@ -632,6 +646,7 @@ function animate() {
 function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  updateCameraLayout();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -713,10 +728,15 @@ function pourVialAnimation(isCorrect, onDone) {
   const vial = createVial();
   pouringVial = vial;
 
+  const mobileLayout = isCompactMobile();
   // Start position: top-right of the scene
-  const startPos = new THREE.Vector3(2.5, 4, 1.5);
+  const startPos = mobileLayout
+    ? new THREE.Vector3(2.15, 3.45, 1.4)
+    : new THREE.Vector3(2.5, 4, 1.5);
   // Pour position: above cauldron, tilted
-  const pourPos = new THREE.Vector3(0.6, 2.2, 0.3);
+  const pourPos = mobileLayout
+    ? new THREE.Vector3(0.42, 1.9, 0.28)
+    : new THREE.Vector3(0.6, 2.2, 0.3);
 
   vial.position.copy(startPos);
   scene.add(vial);
