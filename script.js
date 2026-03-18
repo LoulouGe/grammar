@@ -457,6 +457,8 @@ const btnBack = document.getElementById("btn-back");
 const gameModeStatus = document.getElementById("game-mode-status");
 const resultsModeSummary = document.getElementById("results-mode-summary");
 const cauldronAura = document.getElementById("cauldron-aura");
+const btnScrollUp = document.getElementById("btn-scroll-up");
+const btnScrollDown = document.getElementById("btn-scroll-down");
 
 // ===== Persistent Score (localStorage) =====
 function getTotalScore() {
@@ -1079,6 +1081,21 @@ function showScreen(screen) {
     s.classList.remove("active")
   );
   screen.classList.add("active");
+  screen.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function getActiveScrollableScreen() {
+  return document.querySelector(".screen.active");
+}
+
+function scrollActiveScreen(delta) {
+  const activeScreen = getActiveScrollableScreen();
+  if (!activeScreen) return;
+
+  activeScreen.scrollBy({
+    top: delta,
+    behavior: "smooth",
+  });
 }
 
 function clearGameTimers() {
@@ -1726,6 +1743,18 @@ btnBack.addEventListener("click", () => {
   refreshTotalScore();
   showScreen(titleScreen);
 });
+
+if (btnScrollUp) {
+  btnScrollUp.addEventListener("click", () => {
+    scrollActiveScreen(-260);
+  });
+}
+
+if (btnScrollDown) {
+  btnScrollDown.addEventListener("click", () => {
+    scrollActiveScreen(260);
+  });
+}
 
 // ===== Init =====
 selectMode(currentMode);

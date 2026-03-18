@@ -967,6 +967,41 @@ html::-webkit-scrollbar-thumb:hover {
   transform: translateY(-2px);
 }
 
+.scroll-controls {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right, 0px) + 12px);
+  bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px);
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.scroll-btn {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--card-border);
+  border-radius: 50%;
+  background: rgba(60, 35, 15, 0.88);
+  color: var(--accent-gold);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.scroll-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-gold);
+  background: rgba(86, 57, 34, 0.95);
+}
+
+.scroll-btn:active {
+  transform: translateY(0);
+}
+
 /* ===== Force Landscape on Mobile ===== */
 #rotate-overlay {
   display: none;
@@ -1183,5 +1218,18 @@ html::-webkit-scrollbar-thumb:hover {
   .screen::-webkit-scrollbar,
   html::-webkit-scrollbar {
     width: 10px;
+  }
+
+  .scroll-controls {
+    display: flex;
+    right: max(10px, env(safe-area-inset-right, 0px) + 10px);
+    bottom: max(12px, env(safe-area-inset-bottom, 0px) + 12px);
+    gap: 0.45rem;
+  }
+
+  .scroll-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 0.95rem;
   }
 }
