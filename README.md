@@ -1,6 +1,6 @@
 # 🧪 L'Atelier de Potions Grammaticales
 
-Jeu éducatif pour apprendre les accords grammaticaux en français. L'enfant est un alchimiste qui assemble des mots-ingrédients pour créer des potions. Les accords corrects déclenchent des effets magiques, les erreurs ouvrent un vortex fumé au-dessus du chaudron.
+Jeu éducatif pour apprendre les accords grammaticaux en français. L'enfant est un alchimiste qui assemble des mots-ingrédients pour créer des potions. Les accords corrects déclenchent des étincelles magiques, les erreurs font monter un nuage de fumée au-dessus du chaudron.
 
 Un magicien mélange la potion avec son bâton, accompagné de son chat noir aux yeux verts.
 
@@ -12,6 +12,13 @@ Un magicien mélange la potion avec son bâton, accompagné de son chat noir aux
 4. Appuie sur **"Lancer la potion !"**
 5. Regarde l'Erlenmeyer verser son contenu dans le chaudron...
 6. Ton score total de potions réussies 🧪 est sauvegardé entre les parties !
+
+## Modes de jeu
+
+- `Classique` : progression normale niveau par niveau
+- `Combo` : la partie s'arrête à la première erreur
+- `Chrono` : 90 secondes pour marquer le plus de points possible
+- `Survie` : réussir 10 potions avec seulement 2 erreurs autorisées
 
 ## Les niveaux
 
