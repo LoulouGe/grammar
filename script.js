@@ -427,12 +427,6 @@ const EXERCISES = [
     for (let i = 0; i < baseCount; i++) {
       const ex = JSON.parse(JSON.stringify(original[i]));
       ex.id = i + 1 + m * baseCount;
-      if (m > 0) {
-        // Slight variation to hint/messages to help distinguish duplicates in-game
-        ex.hint = ex.hint + ` (var ${m})`;
-        if (ex.successMsg) ex.successMsg = ex.successMsg + ` (${m})`;
-        if (ex.failMsg) ex.failMsg = ex.failMsg + ` (${m})`;
-      }
       expanded.push(ex);
     }
   }
@@ -456,8 +450,8 @@ const resultsScore = document.getElementById("results-score");
 const resultsMessage = document.getElementById("results-message");
 const btnReplay = document.getElementById("btn-replay");
 const btnMenu = document.getElementById("btn-menu");
-const totalScoreCount = document.getElementById("total-score-count");
 const gameScoreEl = document.getElementById("game-score");
+const gameScoreLabel = document.getElementById("game-score-label");
 const gameScoreCount = document.getElementById("game-score-count");
 const btnBack = document.getElementById("btn-back");
 const gameModeStatus = document.getElementById("game-mode-status");
@@ -476,7 +470,10 @@ function addToTotalScore(points) {
 }
 
 function refreshTotalScore() {
-  totalScoreCount.textContent = getTotalScore();
+  const totalScoreCount = document.getElementById("total-score-count");
+  if (totalScoreCount) {
+    totalScoreCount.textContent = getTotalScore();
+  }
 }
 
 // ===== Game State =====
@@ -490,13 +487,14 @@ let activeSlotIndex = null; // which choice slot is being filled
 let streak = 0;
 let bestStreak = 0;
 let lives = 2;
-let chronoLeft = 90;
+let chronoLeft = 40;
 let chronoInterval = null;
 let gameEnded = false;
 let advanceTimeout = null;
 let wrongAnswers = 0;
 let successfulAnswers = 0;
 let roundTarget = 0;
+let pendingLifeLoss = false;
 
 const MODE_CONFIG = {
   classic: {
@@ -509,7 +507,7 @@ const MODE_CONFIG = {
   },
   chrono: {
     label: "Chrono",
-    description: "90 secondes",
+    description: "40 secondes",
   },
   survival: {
     label: "Survie",
@@ -1035,29 +1033,23 @@ function failEffect() {
 // ===== 2D Character Reactions =====
 function triggerCharacterReaction(isCorrect) {
   const wizard = document.getElementById("wizard-2d");
-  const cat = document.getElementById("cat-2d");
-  if (!wizard || !cat) return;
+  if (!wizard) return;
 
   // Remove any existing reaction classes
   wizard.classList.remove("wizard-celebrate", "wizard-worried");
-  cat.classList.remove("cat-happy", "cat-startled");
 
   // Force reflow so re-adding the class triggers animation
   void wizard.offsetWidth;
-  void cat.offsetWidth;
 
   if (isCorrect) {
     wizard.classList.add("wizard-celebrate");
-    cat.classList.add("cat-happy");
   } else {
     wizard.classList.add("wizard-worried");
-    cat.classList.add("cat-startled");
   }
 
   // Clean up after animations finish
   setTimeout(() => {
     wizard.classList.remove("wizard-celebrate", "wizard-worried");
-    cat.classList.remove("cat-happy", "cat-startled");
   }, 2000);
 }
 
@@ -1114,10 +1106,11 @@ function setupModeState() {
   streak = 0;
   bestStreak = 0;
   lives = 2;
-  chronoLeft = 90;
+  chronoLeft = 40;
   wrongAnswers = 0;
   successfulAnswers = 0;
   gameEnded = false;
+  pendingLifeLoss = false;
   clearGameTimers();
   roundTarget = currentMode === "survival" ? 10 : exercises.length;
   updateModeStatus();
@@ -1139,6 +1132,19 @@ function endGame() {
   gameEnded = true;
   clearGameTimers();
   showResults();
+}
+
+function resetGameUi() {
+  gameEnded = true;
+  selections = {};
+  activeSlotIndex = null;
+  if (feedbackEl) {
+    feedbackEl.className = "feedback hidden";
+    feedbackEl.textContent = "";
+  }
+  btnValidate.disabled = true;
+  wordCardsEl.innerHTML = "";
+  sentenceBuilder.innerHTML = "";
 }
 
 function getModePoints() {
@@ -1167,7 +1173,7 @@ function getModeSummary(total) {
     return `Partie terminee a la premiere erreur. Meilleure serie : ${bestStreak}.`;
   }
   if (currentMode === "chrono") {
-    return `Tu as reussi ${successfulAnswers} bonne${successfulAnswers > 1 ? "s" : ""} reponse${successfulAnswers > 1 ? "s" : ""} en 90 secondes.`;
+    return `Tu as reussi ${successfulAnswers} bonne${successfulAnswers > 1 ? "s" : ""} reponse${successfulAnswers > 1 ? "s" : ""} en 40 secondes.`;
   }
   if (currentMode === "survival") {
     return `Objectif : ${roundTarget} potions. Erreurs : ${wrongAnswers}/2.`;
@@ -1189,9 +1195,14 @@ function getResultsRatio(total) {
 }
 
 function updateScoreDisplay() {
-  const prefix = currentMode === "combo" ? "🔥" : "🧪";
-  if (gameScoreEl.firstChild) {
-    gameScoreEl.firstChild.textContent = `${prefix} `;
+  if (gameScoreLabel) {
+    if (currentMode === "combo") {
+      gameScoreLabel.textContent = "🔥 Score combo";
+    } else if (currentMode === "chrono") {
+      gameScoreLabel.textContent = "⏱ Score chrono";
+    } else {
+      gameScoreLabel.textContent = "🧪 Potions réussies";
+    }
   }
   gameScoreCount.textContent = score;
 }
@@ -1470,11 +1481,13 @@ function validateAnswer() {
     wrongAnswers++;
     streak = 0;
     if (currentMode === "survival") {
-      lives = Math.max(0, lives - 1);
+      pendingLifeLoss = true;
     }
   }
 
-  updateModeStatus();
+  if (!(currentMode === "survival" && !correct)) {
+    updateModeStatus();
+  }
 
   // Disable further interaction immediately
   btnValidate.disabled = true;
@@ -1485,6 +1498,11 @@ function validateAnswer() {
   // Start pouring animation — effects + feedback trigger after pour finishes
   pourVialAnimation(correct, () => {
     if (gameEnded) return;
+    if (!correct && currentMode === "survival" && pendingLifeLoss) {
+      lives = Math.max(0, lives - 1);
+      pendingLifeLoss = false;
+      updateModeStatus();
+    }
     // Show feedback message after the pour + effect
     if (correct) {
       let successText = ex.successMsg;
@@ -1600,7 +1618,7 @@ function showResults() {
   if (currentMode === "combo") {
     resultsScore.textContent = `${score} points de combo`;
   } else if (currentMode === "chrono") {
-    resultsScore.textContent = `${score} points en 90 secondes`;
+    resultsScore.textContent = `${score} points en 40 secondes`;
   } else if (currentMode === "survival") {
     resultsScore.textContent = `${successfulAnswers} / ${roundTarget} potions reussies`;
   } else {
@@ -1675,12 +1693,14 @@ btnReplay.addEventListener("click", () => {
 
 btnMenu.addEventListener("click", () => {
   clearGameTimers();
+  resetGameUi();
   refreshTotalScore();
   showScreen(titleScreen);
 });
 
 btnBack.addEventListener("click", () => {
   clearGameTimers();
+  resetGameUi();
   // Save partial score before quitting
   if (score > 0) addToTotalScore(score);
   refreshTotalScore();

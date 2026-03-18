@@ -32,15 +32,11 @@
     <!-- 2D Wizard -->
     <img id="wizard-2d" src="assets/wizard.png" alt="Sorcier" />
 
-    <!-- 2D Cat -->
-    <img id="cat-2d" src="assets/cat.png" alt="Chat" />
-
     <!-- Title Screen -->
     <div id="title-screen" class="screen active">
       <div class="title-content">
         <h1 class="title">L'Atelier de Potions</h1>
         <p class="subtitle">Potions Grammaticales</p>
-        <div id="total-score" class="total-score">🧪 <span id="total-score-count">0</span> potions réussies</div>
         <div class="level-select">
           <button class="btn-level" data-level="apprenti">
             <span class="level-icon">🧪</span>
@@ -76,7 +72,7 @@
             </button>
             <button class="btn-mode" data-mode="chrono">
               <span class="mode-name">Chrono</span>
-              <span class="mode-desc">90 secondes pour marquer un max</span>
+              <span class="mode-desc">40 secondes pour marquer un max</span>
             </button>
             <button class="btn-mode" data-mode="survival">
               <span class="mode-name">Survie</span>
@@ -92,7 +88,7 @@
       <div class="game-overlay">
         <!-- Top bar: score + back button -->
         <div class="game-top-bar">
-          <div id="game-score" class="game-score">🧪 <span id="game-score-count">0</span></div>
+          <div id="game-score" class="game-score"><span id="game-score-label">Potions réussies</span> <span id="game-score-count">0</span></div>
           <div id="game-mode-status" class="game-mode-status hidden"></div>
           <button id="btn-back" class="btn-back" title="Menu principal">✕</button>
         </div>

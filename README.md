@@ -11,13 +11,13 @@ Un magicien mélange la potion avec son bâton, accompagné de son chat noir aux
 3. Clique sur les mots pour remplir les cases manquantes
 4. Appuie sur **"Lancer la potion !"**
 5. Regarde l'Erlenmeyer verser son contenu dans le chaudron...
-6. Ton score total de potions réussies 🧪 est sauvegardé entre les parties !
+6. Les bonnes réponses sont sauvegardées d'une partie à l'autre
 
 ## Modes de jeu
 
 - `Classique` : progression normale niveau par niveau
 - `Combo` : la partie s'arrête à la première erreur
-- `Chrono` : 90 secondes pour marquer le plus de points possible
+- `Chrono` : 40 secondes pour marquer le plus de points possible
 - `Survie` : réussir 10 potions avec seulement 2 erreurs autorisées
 
 ## Les niveaux
