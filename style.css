@@ -1195,13 +1195,13 @@ html::-webkit-scrollbar-thumb:hover {
   }
 
   #cauldron-2d {
-    width: min(52vw, 190px);
+    width: min(35vw, 100px);
     bottom: 3.5%;
   }
 
   #cauldron-aura {
-    width: min(34vw, 112px);
-    height: min(11vw, 42px);
+    width: min(20vw, 80px);
+    height: min(8vw, 28px);
     bottom: 8.8%;
   }
 
