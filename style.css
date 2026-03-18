@@ -1195,14 +1195,14 @@ html::-webkit-scrollbar-thumb:hover {
   }
 
   #cauldron-2d {
-    width: min(82vw, 360px);
-    bottom: 2.5%;
+    width: min(64vw, 250px);
+    bottom: 3%;
   }
 
   #cauldron-aura {
-    width: min(56vw, 220px);
-    height: min(20vw, 88px);
-    bottom: 10.5%;
+    width: min(42vw, 150px);
+    height: min(14vw, 56px);
+    bottom: 9.5%;
   }
 
   .results-content {
